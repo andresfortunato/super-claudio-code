@@ -9,24 +9,24 @@ Durin makes Claude Code sessions more efficient by providing three automation la
 Install the framework globally (once):
 
 ```bash
-npm install -g durin
+npm install -g github:andresfortunato/durin
 ```
 
-This gives you the `durin` CLI and registers the skills and hooks.
-
-Then, in each project where you want to use Durin:
+This gives you the `durin` CLI globally. Then, in each project:
 
 ```bash
 durin init
 ```
 
-This scaffolds project directories and merges hooks into `.claude/settings.json`. It's idempotent — safe to run again without duplicating anything.
+This scaffolds project directories (`.claude/status/`, `.claude/learnings/`, `plan/`, `archive/`, `brainstorms/`) and merges hooks into the project's `.claude/settings.json`. Idempotent — safe to run again.
 
 Verify:
 
 ```bash
 durin status
 ```
+
+> **Note:** Once published to npm, install simplifies to `npm install -g durin`.
 
 ## Architecture
 

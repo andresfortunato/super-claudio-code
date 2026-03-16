@@ -123,6 +123,15 @@ Build the agent definitions and hook integration for plan completion automation.
 - **Estimated context**: ~35%
 - **Dependencies**: Phases 2 and 5
 
+### Future: Plugin Marketplace Registration (deferred)
+Register skills on the Claude Code plugin marketplace so they're discoverable and installable without manual file copying. Currently skills are installed as `.md` files in `~/.claude/` for cross-project access.
+- **Intent**: One-command install that makes skills available in all projects automatically
+- **Dependencies**: Claude Code plugin marketplace API availability
+
+### Future: npm Registry Publishing (deferred)
+Publish to npm so `npm install -g durin` works without the GitHub URL. Requires checking name availability and setting up CI/CD for releases.
+- **Intent**: Simplify install from `npm install -g github:andresfortunato/durin` to `npm install -g durin`
+
 ### Future: SKILL.md.tmpl Codegen (deferred)
 Auto-generate skill docs from templates + source code metadata (gstack pattern). Prevents drift between skills and CLI/hook implementations. Not urgent with 4 skills — becomes valuable when multiple contributors or frequent command changes make manual sync error-prone.
 - **Intent**: Skills can never reference stale CLI commands or hook names
