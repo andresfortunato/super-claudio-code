@@ -2,7 +2,7 @@
   "hooks": {
     "SessionStart": [
       {
-        "matcher": null,
+        "matcher": "",
         "hooks": [
           {
             "type": "command",
@@ -14,7 +14,7 @@
     ],
     "UserPromptSubmit": [
       {
-        "matcher": null,
+        "matcher": "",
         "hooks": [
           {
             "type": "command",
@@ -26,7 +26,7 @@
     ],
     "PostToolUse": [
       {
-        "matcher": null,
+        "matcher": "",
         "hooks": [
           {
             "type": "command",
@@ -38,7 +38,7 @@
     ],
     "TaskCompleted": [
       {
-        "matcher": null,
+        "matcher": "",
         "hooks": [
           {
             "type": "command",
@@ -50,7 +50,7 @@
     ],
     "Stop": [
       {
-        "matcher": null,
+        "matcher": "",
         "hooks": [
           {
             "type": "command",
@@ -62,7 +62,7 @@
     ],
     "PreCompact": [
       {
-        "matcher": null,
+        "matcher": "",
         "hooks": [
           {
             "type": "command",
@@ -74,7 +74,7 @@
     ],
     "TeammateIdle": [
       {
-        "matcher": null,
+        "matcher": "",
         "hooks": [
           {
             "type": "command",

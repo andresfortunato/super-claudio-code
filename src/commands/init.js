@@ -143,7 +143,7 @@ async function mergeHooksIntoSettings(cwd) {
   let merged = 0;
   for (const { event, script, timeout } of hookDefs) {
     const entry = {
-      matcher: null,
+      matcher: "",
       hooks: [{
         type: 'command',
         command: `node ${resolve(hooksDir, script)}`,
