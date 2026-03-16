@@ -1,0 +1,15 @@
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+
+# Generated locally by durin init / install (not part of framework source)
+.claude/settings.json
+.claude/settings.local.json
+.claude/status/
+.claude/learnings/index.yaml
+.claude/learnings/*.md
+.claude/.learning-prompted
+
+# Keep the config template (framework source)
+!.claude/learnings/config/

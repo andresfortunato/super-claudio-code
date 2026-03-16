@@ -1,0 +1,37 @@
+{
+  "name": "durin",
+  "version": "0.1.0",
+  "description": "Claude Code efficiency framework — structured planning, context management, session orchestration, and automated learning",
+  "type": "module",
+  "bin": {
+    "durin": "./src/cli.js"
+  },
+  "scripts": {
+    "test": "node --test src/**/*.test.js",
+    "postinstall": "node install.js"
+  },
+  "files": [
+    "src/",
+    "hooks/",
+    "skills/",
+    ".claude-plugin/",
+    ".claude/learnings/config/",
+    "install.js"
+  ],
+  "keywords": [
+    "claude-code",
+    "planning",
+    "workflow",
+    "ai-development",
+    "tdd",
+    "multi-session",
+    "agent-teams"
+  ],
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "commander": "^13.1.0"
+  }
+}

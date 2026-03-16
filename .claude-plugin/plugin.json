@@ -1,0 +1,15 @@
+{
+  "name": "durin",
+  "displayName": "Durin",
+  "description": "Claude Code efficiency framework — structured planning, context management, session orchestration, and automated learning",
+  "version": "0.1.0",
+  "skills": [
+    "skills/brainstorming/SKILL.md",
+    "skills/planning/SKILL.md",
+    "skills/implementation/SKILL.md",
+    "skills/agent-teams/SKILL.md",
+    "skills/tdd/SKILL.md"
+  ],
+  "hooks": "hooks/hooks.json",
+  "postInstall": "node install.js"
+}
