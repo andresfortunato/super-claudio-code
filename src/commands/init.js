@@ -1,6 +1,7 @@
-import { mkdir, writeFile, readFile, access } from 'node:fs/promises';
+import { mkdir, writeFile, readFile, access, symlink, readlink, unlink, readdir } from 'node:fs/promises';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { homedir } from 'node:os';
 
 const DIRECTORIES = [
   '.claude/status',
@@ -112,6 +113,9 @@ export async function initCommand() {
   // Merge hooks into .claude/settings.json
   await mergeHooksIntoSettings(cwd);
 
+  // Install skills to ~/.claude/commands/ (user-wide, symlinks)
+  await installSkills();
+
   console.log('\nDone. Edit .claude/status/project.md to set your project identity.');
 }
 
@@ -170,6 +174,50 @@ async function mergeHooksIntoSettings(cwd) {
     console.log(`  ✓ .claude/settings.json (${merged} hooks merged)`);
   } else {
     console.log('  · .claude/settings.json (hooks already installed)');
+  }
+}
+
+async function installSkills() {
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+  const skillsSource = resolve(__dirname, '../../skills');
+  const commandsDir = join(homedir(), '.claude', 'commands');
+
+  await mkdir(commandsDir, { recursive: true });
+
+  let entries;
+  try {
+    entries = await readdir(skillsSource, { withFileTypes: true });
+  } catch {
+    console.log('  · Skills source not found (skipping)');
+    return;
+  }
+
+  const skillDirs = entries.filter(e => e.isDirectory());
+  let installed = 0;
+
+  for (const dir of skillDirs) {
+    const source = join(skillsSource, dir.name);
+    const target = join(commandsDir, dir.name);
+
+    try {
+      // Check if symlink already exists and points to the right place
+      const existing = await readlink(target).catch(() => null);
+      if (existing === source) continue;
+
+      // Remove stale symlink or file
+      if (existing !== null) await unlink(target);
+
+      await symlink(source, target, 'dir');
+      installed++;
+    } catch {
+      // Target exists as a real directory — don't overwrite user's files
+    }
+  }
+
+  if (installed > 0) {
+    console.log(`  ✓ ~/.claude/commands/ (${installed} skills linked)`);
+  } else {
+    console.log('  · ~/.claude/commands/ (skills already installed)');
   }
 }
 
