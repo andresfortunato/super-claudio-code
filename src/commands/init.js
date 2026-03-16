@@ -159,12 +159,15 @@ async function mergeHooksIntoSettings(cwd) {
       settings.hooks[event] = [entry];
       merged++;
     } else {
-      const alreadyInstalled = settings.hooks[event].some(e =>
+      const durinIdx = settings.hooks[event].findIndex(e =>
         e.hooks?.some(h => h.command?.includes('/durin/hooks/'))
       );
-      if (!alreadyInstalled) {
+      if (durinIdx === -1) {
         settings.hooks[event].push(entry);
         merged++;
+      } else {
+        // Repair existing entry (fix null matchers, update paths)
+        settings.hooks[event][durinIdx] = entry;
       }
     }
   }

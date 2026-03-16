@@ -1,51 +1,38 @@
-# Handoff — Session 3 (2026-03-15)
+# Handoff — Session 4 (2026-03-16)
 
 ## Status
 
-Design and planning phase complete. All architectural decisions finalized. Implementation plan written. Ready to execute Phase 1.
+Phases 1-5 implemented and tested. Framework is functional end-to-end. Several installation bugs found and fixed during real-world usage.
 
-## Read order for implementation
+## What was built this session
 
-1. **This file** — you're reading it
-2. **`plan/plan-framework/plan.md`** — the full implementation plan (goal, constraints, 15 decisions, file manifest, 6 phases + 1 deferred)
-3. **`handoff.md`** (repo root) — Sessions 1 & 2 context: file system layout, learning component design, archivist design, research insights from 6 repos
+- **CLI** (Phase 1): `durin init`, `durin plan init`, `durin status`, `durin learning list` — all working
+- **Hooks** (Phase 2): All 7 hooks implemented and tested (session-start, user-prompt-submit, context-monitor, stop, pre-compact, task-completed, teammate-idle)
+- **Skills** (Phase 3): Already drafted from session 3, no changes needed
+- **Learning system** (Phase 4): index.yaml trigger matching, config template, learning list command
+- **Install/distribution** (Phase 5): install.js, package.json, .claude-plugin/plugin.json
+- **README**: Full documentation of architecture, CLI, skills, hooks, learning system, plan lifecycle
+- **Agent definitions**: hooks/agents/archivist.md and cleanup.md for plan completion
 
-## Skill drafts (read before Phase 3, not before)
+## Bugs found and fixed
 
-- `skills/brainstorming/SKILL.md` — mayeutic model, temporal phases, research on-demand, dual output
-- `skills/planning/SKILL.md` + `skills/planning/references/multi-session.md` — plan writing principles, context files, multi-session protocols
-- `skills/implementation/SKILL.md` + `skills/implementation/references/escalation-reference.md` — phase-level execution, escalation triggers, parallelization delegation, plan completion
-- `skills/agent-teams/SKILL.md` — orchestration step, tmux mode, output collection, quality gates
+1. **`matcher: null` in hooks** — Claude Code requires string, not null. Fixed to `""`. Also fixed idempotency logic so `durin init` re-run **replaces** existing durin hooks (repairing null matchers) instead of skipping them.
+2. **postinstall fails on global install** — `ENOENT spawn sh` error. Removed postinstall; users run `durin init` explicitly per-project.
+3. **Skills not discoverable** — Global npm install puts skills in node_modules, invisible to Claude Code. Fixed: `durin init` symlinks skill directories to `~/.claude/commands/` for user-wide access.
 
-## Research (reference only, don't read unless stuck)
+## Uncommitted fix
 
-- `research/synthesis.md` — cross-repo comparative analysis
-- `research/gstack.md` — CLI-over-MCP pattern, codegen system, 3-tier evals
-- `research/everything-claude-code.md` — ECC hooks, tmux-worktree-orchestrator, session persistence
-- `research/compound-engineering.md` — learning system design, grep-as-index
+`src/commands/init.js` and `.claude/settings.json` have the null matcher repair fix. Need to commit and push.
 
-## Start at
+## What's left
 
-**Phase 1: CLI Tool** — Build the Node.js CLI (`durin`) with three commands:
-- `durin init` — scaffold project directories (`.claude/status/`, `.claude/learnings/`, `plan/`, `archive/`, `brainstorms/`)
-- `durin plan init [name]` — scaffold plan directory (`plan/plan-[name]/` with `plan.md`, `phases/`, `context/`)
-- `durin status` — read `.claude/status/` and print aggregate progress
+- **Phase 6 (Integration testing)**: Full E2E was done informally (15 tests passed), but no automated test suite
+- **TDD skill**: Written but not tested in a real TDD session
+- **npm publishing**: Not published yet. Install is `npm install -g github:andresfortunato/durin`
+- **Plugin marketplace**: Deferred — noted in plan.md
 
-Node.js, npm package, `bin` entry in package.json. See plan.md file manifest for full file list.
+## Start next session with
 
-## Key constraints to remember
-
-- **CLI handles scaffolding, skills handle judgment, hooks handle automation** — don't blur the layers
-- **Skills reference CLI commands by name** (`durin plan init [name]`) — the CLI is the interface, skills are consumers
-- **Auto-commit uses template messages** from task subject: `"Complete: [task subject]"`. Not LLM-generated.
-- **All skills must read/write status files identically** — same paths, same format (cross-skill shared state)
-- **Plan directory scaffolding is triggered by the planning skill** running `durin plan init [name]` as its first step — not by a hook, not by the user manually
-
-## What's NOT built yet
-
-Everything. The repo currently contains only:
-- Research documents (`research/*.md`)
-- Planning notes (`planning.md`, `notes.txt`)
-- Draft skills (`skills/`)
-- This implementation plan (`plan/plan-framework/`)
-- No CLI, no hooks, no package.json, no install script
+1. Commit the uncommitted matcher fix
+2. Run `durin init` in this repo to verify hooks work
+3. Start a real Claude Code session in another project to validate the full flow
