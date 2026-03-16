@@ -1,5 +1,6 @@
-import { mkdir, writeFile, access } from 'node:fs/promises';
-import { join } from 'node:path';
+import { mkdir, writeFile, readFile, access } from 'node:fs/promises';
+import { join, resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const DIRECTORIES = [
   '.claude/status',
@@ -108,7 +109,68 @@ export async function initCommand() {
     console.log('  · .claude/learnings/config/learnings-config.md (already exists)');
   }
 
+  // Merge hooks into .claude/settings.json
+  await mergeHooksIntoSettings(cwd);
+
   console.log('\nDone. Edit .claude/status/project.md to set your project identity.');
+}
+
+async function mergeHooksIntoSettings(cwd) {
+  const settingsPath = join(cwd, '.claude/settings.json');
+  let settings;
+  try {
+    settings = JSON.parse(await readFile(settingsPath, 'utf-8'));
+  } catch {
+    settings = {};
+  }
+
+  // Resolve hooks directory — walk up from this file to find the package root
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+  const hooksDir = resolve(__dirname, '../../hooks');
+
+  const hookDefs = [
+    { event: 'SessionStart', script: 'session-start.js', timeout: 5 },
+    { event: 'UserPromptSubmit', script: 'user-prompt-submit.js', timeout: 5 },
+    { event: 'PostToolUse', script: 'context-monitor.js', timeout: 5 },
+    { event: 'TaskCompleted', script: 'task-completed.js', timeout: 30 },
+    { event: 'Stop', script: 'stop.js', timeout: 10 },
+    { event: 'PreCompact', script: 'pre-compact.js', timeout: 5 },
+    { event: 'TeammateIdle', script: 'teammate-idle.js', timeout: 10 },
+  ];
+
+  if (!settings.hooks) settings.hooks = {};
+
+  let merged = 0;
+  for (const { event, script, timeout } of hookDefs) {
+    const entry = {
+      matcher: null,
+      hooks: [{
+        type: 'command',
+        command: `node ${resolve(hooksDir, script)}`,
+        timeout,
+      }],
+    };
+
+    if (!settings.hooks[event]) {
+      settings.hooks[event] = [entry];
+      merged++;
+    } else {
+      const alreadyInstalled = settings.hooks[event].some(e =>
+        e.hooks?.some(h => h.command?.includes('/durin/hooks/'))
+      );
+      if (!alreadyInstalled) {
+        settings.hooks[event].push(entry);
+        merged++;
+      }
+    }
+  }
+
+  await writeFile(settingsPath, JSON.stringify(settings, null, 2) + '\n');
+  if (merged > 0) {
+    console.log(`  ✓ .claude/settings.json (${merged} hooks merged)`);
+  } else {
+    console.log('  · .claude/settings.json (hooks already installed)');
+  }
 }
 
 async function fileExists(path) {

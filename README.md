@@ -4,17 +4,25 @@ A Claude Code efficiency framework — structured planning, context management, 
 
 Durin makes Claude Code sessions more efficient by providing three automation layers that work together: a **CLI** for scaffolding, **skills** for orchestration, and **hooks** for lifecycle management.
 
-## Quick Start
+## Installation
+
+Install the framework globally (once):
 
 ```bash
-npm install durin
+npm install -g durin
 ```
 
-The post-install script automatically:
-- Merges hooks into your `.claude/settings.json`
-- Scaffolds project directories (`.claude/status/`, `.claude/learnings/`, `plan/`, `archive/`, `brainstorms/`)
+This gives you the `durin` CLI and registers the skills and hooks.
 
-Verify the installation:
+Then, in each project where you want to use Durin:
+
+```bash
+durin init
+```
+
+This scaffolds project directories and merges hooks into `.claude/settings.json`. It's idempotent — safe to run again without duplicating anything.
+
+Verify:
 
 ```bash
 durin status
@@ -45,7 +53,6 @@ durin learning list   agent-teams                PostToolUse
 ### `durin init`
 
 Scaffolds project directories for the framework:
-
 ```
 .claude/status/           — project and plan status (shared state)
 .claude/learnings/        — institutional knowledge across sessions
@@ -53,10 +60,11 @@ plan/                     — active plan directories
 archive/                  — completed plan archives
 brainstorms/              — brainstorming session outputs
 ```
+All directories are automatically cleaned up once implementation completes.
 
 ### `durin plan init <name>`
 
-Creates a new plan directory structure:
+This command is automatically executed by Claude Code when starting a planning process. It creates a new plan directory structure:
 
 ```
 plan/plan-<name>/
@@ -85,31 +93,21 @@ Skills are `.md` files that guide Claude's behavior for specific workflows. They
 
 Collaborative exploration before planning. Claude listens early, challenges mid-conversation, and proposes alternatives late. Outputs structured decision summaries that feed into the planning skill.
 
-**Triggers**: "how should we", "what's the best way to", "brainstorm", thinking out loud about approaches.
-
 ### Planning
 
 Writes implementation plans at the right level of detail — intent and constraints, not code snippets. Plans use a multi-file structure (plan.md + phases/ + context/) designed for selective loading across sessions.
-
-**Triggers**: trade-offs to weigh, architectural choices, ambiguous scope, multi-session work.
 
 ### Implementation
 
 Executes plans across sessions. Phase-level execution with verification at each checkpoint. Manages context budget (60% rule), handoff writing, escalation when reality diverges from the plan.
 
-**Triggers**: "implement", "start building", "continue", resuming a plan with `handoff.md`.
-
 ### Agent Teams
 
 Orchestrates parallel work with independent Claude instances. Handles file ownership, worktree isolation for experiments, quality gates, and output consolidation.
 
-**Triggers**: "run in parallel", independent work units, experimental branches.
-
 ### TDD
 
-Canon test-driven development (Kent Beck). Behavioral test lists during planning, RED-GREEN-REFACTOR cycles during execution. Separate skill — used alongside implementation when the plan calls for it.
-
-**Triggers**: "use TDD", "test-driven", testable behavior implementation.
+Canon test-driven development (https://tidyfirst.substack.com/p/canon-tdd). Behavioral test lists during planning, RED-GREEN-REFACTOR cycles during execution. Separate skill — used alongside implementation when the plan calls for it.
 
 ## Hooks
 
@@ -146,7 +144,7 @@ brainstorm  →  plan  →  implement  →  complete  →  archive
 ```
 
 1. **Brainstorm**: Explore approaches, make decisions
-2. **Plan**: `durin plan init <name>`, write plan.md with decisions, constraints, file manifest
+2. **Plan**: Planning skill runs `durin plan init <name>`, then writes plan.md with decisions, constraints, file manifest
 3. **Implement**: Execute phase by phase, verify at each checkpoint, write handoffs between sessions
 4. **Complete**: Write `.completed` marker when all phases verified
 5. **Archive**: Stop hook detects marker, launches archivist (synthesize archive) + cleanup agent (remove dead code) in parallel
