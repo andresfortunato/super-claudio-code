@@ -3,11 +3,13 @@
 This is my Claude Code workflow. It's a work in progress where I test different tools and ideas and document them. The workflow is focused on:
 
 - Optimizing planning so that we increase plan quality and reduce the ratio of .md lines to code at the same time
-- Context management so that we avoid context rot and codebase re-exploration
+- Context management so that we avoid context rot and codebase re-exploration every time
 - Multi-session orchestration so that we don't worry about referencing files or summaries any more
 - Automated learning to take notes of relevant challenges or solutions.
 
-Super Claudio Code (SCC) is based on my experience working with Claude Code and testing or reviewing existing popular workflows (see 'Reference Workflows' section). SCC has two layers: a **CLI** for scaffolding and **skills** for orchestration.
+Super Claudio Code (SCC) is based on my experience working with Claude Code. I've also tested and reviewed (with Claude) existing popular workflows (see 'Reference Workflows' section). 
+
+SCC has two layers: a **CLI** for scaffolding and **skills** for orchestration.
 
 ## Installation
 
@@ -108,7 +110,7 @@ Orchestrates parallel work with independent Claude instances. Handles file owner
 
 ### TDD
 
-Canon test-driven development (https://tidyfirst.substack.com/p/canon-tdd). Behavioral test lists during planning, RED-GREEN-REFACTOR cycles during execution. Separate skill — used alongside implementation when the plan calls for it.
+[Canon test-driven development](https://tidyfirst.substack.com/p/canon-tdd). Behavioral test lists during planning, RED-GREEN-REFACTOR cycles during execution. Separate skill — used alongside implementation when the plan calls for it.
 
 ### Learning Capture
 
