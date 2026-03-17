@@ -1,38 +1,37 @@
-# Handoff — Session 4 (2026-03-16)
+# Handoff — Session 5 (2026-03-17)
 
 ## Status
 
-Phases 1-5 implemented and tested. Framework is functional end-to-end. Several installation bugs found and fixed during real-world usage.
+Framework functional end-to-end. This session: evaluated hooks against real-world usage in skevals project, identified significant issues. Repo rename from "durin" to "super-claudio-code" in progress.
 
-## What was built this session
+## What happened this session
 
-- **CLI** (Phase 1): `durin init`, `durin plan init`, `durin status`, `durin learning list` — all working
-- **Hooks** (Phase 2): All 7 hooks implemented and tested (session-start, user-prompt-submit, context-monitor, stop, pre-compact, task-completed, teammate-idle)
-- **Skills** (Phase 3): Already drafted from session 3, no changes needed
-- **Learning system** (Phase 4): index.yaml trigger matching, config template, learning list command
-- **Install/distribution** (Phase 5): install.js, package.json, .claude-plugin/plugin.json
-- **README**: Full documentation of architecture, CLI, skills, hooks, learning system, plan lifecycle
-- **Agent definitions**: hooks/agents/archivist.md and cleanup.md for plan completion
+- **Hooks evaluation**: Analyzed all 7 hooks against real transcript from skevals project
+- **Identified hook problems**:
+  - stop.js: handoff check uses wall-clock time (should be session-relative), learning prompt blocks instead of advising, `.learning-prompted` marker never cleaned up
+  - context-monitor.js: overengineered, fires every PostToolUse, hardcoded 200K context window (wrong for 1M models)
+  - task-completed.js: `git add -A` can commit secrets
+  - user-prompt-submit.js: exact-match only, no stemming/substring
+  - teammate-idle.js: JS-only syntax checking, useless in Python projects
 
-## Bugs found and fixed
+## Decisions made
 
-1. **`matcher: null` in hooks** — Claude Code requires string, not null. Fixed to `""`. Also fixed idempotency logic so `durin init` re-run **replaces** existing durin hooks (repairing null matchers) instead of skipping them.
-2. **postinstall fails on global install** — `ENOENT spawn sh` error. Removed postinstall; users run `durin init` explicitly per-project.
-3. **Skills not discoverable** — Global npm install puts skills in node_modules, invisible to Claude Code. Fixed: `durin init` symlinks skill directories to `~/.claude/commands/` for user-wide access.
+- **Delete context-monitor.js** — redundant with pre-compact.js + skill instructions
+- **Delete task-completed.js** — `git add -A` too dangerous, move commit behavior to skills
+- **Simplify stop.js** — learning prompt becomes advisory (no block), handoff check moves to skills, keep only .completed marker detection
+- **Keep session-start.js** — working perfectly
+- **Keep pre-compact.js** — simple, correct, fires at right time
+- **Keep user-prompt-submit.js** — needs better matching (substring/includes)
+- **Keep teammate-idle.js** — needs language-aware syntax checking
+- **Principle**: hooks for deterministic/low-risk/event-specific. Skills for judgment calls.
 
-## Uncommitted fix
+## Repo rename
 
-`src/commands/init.js` and `.claude/settings.json` have the null matcher repair fix. Need to commit and push.
-
-## What's left
-
-- **Phase 6 (Integration testing)**: Full E2E was done informally (15 tests passed), but no automated test suite
-- **TDD skill**: Written but not tested in a real TDD session
-- **npm publishing**: Not published yet. Install is `npm install -g github:andresfortunato/durin`
-- **Plugin marketplace**: Deferred — noted in plan.md
+Renaming from "durin" to "super-claudio-code". CLI command name TBD (awaiting user decision — `scc`, `claudio`, or full name).
 
 ## Start next session with
 
-1. Commit the uncommitted matcher fix
-2. Run `durin init` in this repo to verify hooks work
-3. Start a real Claude Code session in another project to validate the full flow
+1. Decide CLI command name for the rename
+2. Execute the hook changes (delete 2, simplify stop.js, improve user-prompt-submit.js)
+3. Rename all references from durin → super-claudio-code
+4. Evaluate skills and CLI components next

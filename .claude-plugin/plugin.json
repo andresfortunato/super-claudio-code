@@ -1,6 +1,6 @@
 {
-  "name": "durin",
-  "displayName": "Durin",
+  "name": "super-claudio-code",
+  "displayName": "Super Claudio Code",
   "description": "Claude Code efficiency framework — structured planning, context management, session orchestration, and automated learning",
   "version": "0.1.0",
   "skills": [
@@ -10,6 +10,5 @@
     "skills/agent-teams/SKILL.md",
     "skills/tdd/SKILL.md"
   ],
-  "hooks": "hooks/hooks.json",
   "postInstall": "node install.js"
 }

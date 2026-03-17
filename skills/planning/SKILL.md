@@ -114,7 +114,7 @@ This isn't a rigid template — scale it to the task. A two-file change doesn't 
 
 ## Plan Setup
 
-Before writing, scaffold the plan directory by running `durin plan init [name]`. This creates:
+Before writing, scaffold the plan directory by running `scc plan init [name]`. This creates:
 - `plan/plan-[name]/` — plan directory with `plan.md`, `handoff.md`, `log.md`, `phases/`, `context/`
 - `.claude/status/plan-[name].md` — status file (shared state read by all skills and the SessionStart hook)
 

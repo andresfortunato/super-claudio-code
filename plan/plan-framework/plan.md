@@ -27,7 +27,7 @@ Build a Claude Code efficiency framework (npm package + plugin) with three layer
 10. **Hybrid learning retrieval**: Push via UserPromptSubmit hook (grep index.yaml per message) + pull via agent on-demand. (Session 2)
 11. **Context monitoring**: Both hook warnings (65%/75%) and skill text rule (stop at 60%). User will battle test both. (Session 3)
 12. **TDD is a separate skill**: Not part of this framework. Add reference pointer only. (Session 3)
-13. **Plan directory scaffolding**: CLI command `durin plan init [name]` runs as first step when planning skill loads. (Session 3)
+13. **Plan directory scaffolding**: CLI command `scc plan init [name]` runs as first step when planning skill loads. (Session 3)
 14. **Brainstorming is a separate skill**: Brainstorming produces decisions; planning produces plans. Brainstorming precedes planning but can also be standalone (exploratory). (Session 3)
 15. **Mayeutic brainstorming model**: User guides the conversation, Claude reacts — listening early, challenging mid, proposing alternatives late. Claude's questions are reactive (gaps, contradictions), not directive (checklists). (Session 3)
 
@@ -35,9 +35,9 @@ Build a Claude Code efficiency framework (npm package + plugin) with three layer
 
 ### CLI (`src/`)
 - `src/cli.js` — entry point, command router
-- `src/commands/init.js` — `durin init`: scaffold project directories (includes `brainstorms/`)
-- `src/commands/plan-init.js` — `durin plan init [name]`: scaffold plan directory
-- `src/commands/status.js` — `durin status`: aggregate plan status
+- `src/commands/init.js` — `scc init`: scaffold project directories (includes `brainstorms/`)
+- `src/commands/plan-init.js` — `scc plan init [name]`: scaffold plan directory
+- `src/commands/status.js` — `scc status`: aggregate plan status
 - `package.json` — npm package config, bin entry
 
 ### Hook Scripts (`hooks/`)
@@ -54,7 +54,7 @@ Build a Claude Code efficiency framework (npm package + plugin) with three layer
 
 ### Skills (`skills/`) — already drafted, need finalization
 - `skills/brainstorming/SKILL.md` — draft complete: mayeutic model, temporal phases, research on-demand, dual output
-- `skills/planning/SKILL.md` — update: reference `durin plan init`, add brainstorming handoff consumption
+- `skills/planning/SKILL.md` — update: reference `scc plan init`, add brainstorming handoff consumption
 - `skills/planning/references/multi-session.md` — updated this session
 - `skills/implementation/SKILL.md` — update: ensure all hook references are correct
 - `skills/implementation/references/escalation-reference.md` — complete
@@ -63,7 +63,7 @@ Build a Claude Code efficiency framework (npm package + plugin) with three layer
 
 ### Framework Config
 - `.claude-plugin/plugin.json` — plugin marketplace metadata
-- `install.js` — post-install script: copies hooks, registers skills
+- `install.js` — post-install script: registers skills
 
 ### Config
 - `.claude/learnings/config/learnings-config.md` — learning file template + index.yaml entry format
@@ -72,7 +72,7 @@ Build a Claude Code efficiency framework (npm package + plugin) with three layer
 
 This is a greenfield project — the repo currently contains research documents, planning notes, and three draft skill files. No existing code to integrate with. The CLI, hooks, and installation scripts are all new.
 
-The framework will be distributed as an npm package that installs as a Claude Code plugin. Users run `npx durin` (or similar) to install, which copies hooks to `.claude/hooks/`, registers skills, and sets up the project structure.
+The framework is distributed as an npm package that installs as a Claude Code plugin. Users run `npm install -g` then `scc init` per project, which scaffolds directories and installs skills.
 
 ## Phases
 
@@ -80,7 +80,7 @@ The framework will be distributed as an npm package that installs as a Claude Co
 Build the Node.js CLI with `init` and `plan init` commands. These are the foundation — skills reference them.
 - **Intent**: Scaffolding automation that skills depend on
 - **Files**: `src/cli.js`, `src/commands/init.js`, `src/commands/plan-init.js`, `src/commands/status.js`, `package.json`
-- **Verification**: `durin init` creates correct directory structure. `durin plan init test-plan` creates plan scaffold. `durin status` reads status files.
+- **Verification**: `scc init` creates correct directory structure. `scc plan init test-plan` creates plan scaffold. `scc status` reads status files.
 - **Estimated context**: ~40%
 
 ### Phase 2: Hook Scripts
@@ -102,7 +102,7 @@ Update all four skills to reference CLI commands and hooks correctly. Remove any
 ### Phase 4: Learning System
 Build the learning capture, storage, and retrieval pipeline.
 - **Intent**: Institutional knowledge that persists across sessions and plans
-- **Files**: `hooks/user-prompt-submit.js` (retrieval), `hooks/stop.js` (capture trigger), `templates/learning.md`, CLI additions for `durin learning list`
+- **Files**: `hooks/user-prompt-submit.js` (retrieval), `hooks/stop.js` (capture trigger), `templates/learning.md`, CLI additions for `scc learning list`
 - **Verification**: Learning written → appears in index.yaml → injected on matching prompt
 - **Estimated context**: ~40%
 - **Dependencies**: Phase 2 (hooks infrastructure)
@@ -129,8 +129,8 @@ Register skills on the Claude Code plugin marketplace so they're discoverable an
 - **Dependencies**: Claude Code plugin marketplace API availability
 
 ### Future: npm Registry Publishing (deferred)
-Publish to npm so `npm install -g durin` works without the GitHub URL. Requires checking name availability and setting up CI/CD for releases.
-- **Intent**: Simplify install from `npm install -g github:andresfortunato/durin` to `npm install -g durin`
+Publish to npm so `npm install -g super-claudio-code` works without the GitHub URL. Requires checking name availability and setting up CI/CD for releases.
+- **Intent**: Simplify install from `npm install -g github:andresfortunato/super-claudio-code` to `npm install -g super-claudio-code`
 
 ### Future: SKILL.md.tmpl Codegen (deferred)
 Auto-generate skill docs from templates + source code metadata (gstack pattern). Prevents drift between skills and CLI/hook implementations. Not urgent with 4 skills — becomes valuable when multiple contributors or frequent command changes make manual sync error-prone.

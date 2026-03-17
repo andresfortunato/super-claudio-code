@@ -1,10 +1,10 @@
 {
-  "name": "durin",
+  "name": "super-claudio-code",
   "version": "0.1.0",
   "description": "Claude Code efficiency framework — structured planning, context management, session orchestration, and automated learning",
   "type": "module",
   "bin": {
-    "durin": "./src/cli.js"
+    "scc": "./src/cli.js"
   },
   "scripts": {
     "test": "node --test src/**/*.test.js"

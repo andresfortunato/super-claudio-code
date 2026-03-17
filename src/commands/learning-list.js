@@ -9,7 +9,7 @@ export async function learningListCommand() {
   try {
     files = await readdir(learningsDir);
   } catch {
-    console.error('No learnings directory found. Run `durin init` first.');
+    console.error('No learnings directory found. Run `scc init` first.');
     process.exit(1);
   }
 

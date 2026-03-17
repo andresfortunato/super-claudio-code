@@ -1,56 +1,52 @@
-# Durin
+# Super Claudio Code
 
 A Claude Code efficiency framework — structured planning, context management, session orchestration, and automated learning.
 
-Durin makes Claude Code sessions more efficient by providing three automation layers that work together: a **CLI** for scaffolding, **skills** for orchestration, and **hooks** for lifecycle management.
+Super Claudio Code makes Claude Code sessions more efficient by providing two automation layers that work together: a **CLI** for scaffolding and **skills** for orchestration.
 
 ## Installation
 
 Install the framework globally (once):
 
 ```bash
-npm install -g github:andresfortunato/durin
+npm install -g github:andresfortunato/super-claudio-code
 ```
 
-This gives you the `durin` CLI globally. Then, in each project:
+This gives you the `scc` CLI globally. Then, in each project:
 
 ```bash
-durin init
+scc init
 ```
 
-This scaffolds project directories (`.claude/status/`, `.claude/learnings/`, `plan/`, `archive/`, `brainstorms/`) and merges hooks into the project's `.claude/settings.json`. Idempotent — safe to run again.
+This scaffolds project directories (`.claude/status/`, `.claude/learnings/`, `plan/`, `archive/`, `brainstorms/`) and installs skills to `~/.claude/commands/`. Idempotent — safe to run again.
 
 Verify:
 
 ```bash
-durin status
+scc status
 ```
 
-> **Note:** Once published to npm, install simplifies to `npm install -g durin`.
+> **Note:** Once published to npm, install simplifies to `npm install -g super-claudio-code`.
 
 ## Architecture
 
 ```
-CLI (automation)  →  Skills (orchestration)  →  Hooks (lifecycle)
-━━━━━━━━━━━━━━━━     ━━━━━━━━━━━━━━━━━━━━━     ━━━━━━━━━━━━━━━━━
-durin init            brainstorming              SessionStart
-durin plan init       planning                   UserPromptSubmit
-durin status          implementation             Stop
-durin learning list   agent-teams                PostToolUse
-                      tdd                        PreCompact
-                                                 TaskCompleted
-                                                 TeammateIdle
+CLI (automation)  →  Skills (orchestration)
+━━━━━━━━━━━━━━━━     ━━━━━━━━━━━━━━━━━━━━━
+scc init              brainstorming
+scc plan init         planning
+scc status            implementation
+scc learning list     agent-teams
+                      tdd
 ```
 
 **CLI** handles all scaffolding and file operations — zero tokens spent on directory creation.
 
 **Skills** contain judgment and orchestration — when to plan, how to implement, when to escalate.
 
-**Hooks** handle lifecycle automation — context injection, handoff enforcement, auto-commits, learning retrieval.
-
 ## CLI Commands
 
-### `durin init`
+### `scc init`
 
 Scaffolds project directories for the framework:
 ```
@@ -62,7 +58,7 @@ brainstorms/              — brainstorming session outputs
 ```
 All directories are automatically cleaned up once implementation completes.
 
-### `durin plan init <name>`
+### `scc plan init <name>`
 
 This command is automatically executed by Claude Code when starting a planning process. It creates a new plan directory structure:
 
@@ -77,11 +73,11 @@ plan/plan-<name>/
 
 Also creates `.claude/status/plan-<name>.md` for cross-skill status tracking.
 
-### `durin status`
+### `scc status`
 
-Shows project identity and all active plan statuses. This output is also injected into every session by the SessionStart hook.
+Shows project identity and all active plan statuses.
 
-### `durin learning list`
+### `scc learning list`
 
 Lists all stored learnings with their metadata (title, severity, date, tags).
 
@@ -109,9 +105,9 @@ Orchestrates parallel work with independent Claude instances. Handles file owner
 
 Canon test-driven development (https://tidyfirst.substack.com/p/canon-tdd). Behavioral test lists during planning, RED-GREEN-REFACTOR cycles during execution. Separate skill — used alongside implementation when the plan calls for it.
 
-## Hooks
+## Hooks (experimental, disabled by default)
 
-Hooks run automatically on Claude Code lifecycle events. They operate outside the session context at zero token cost (until they inject context).
+The `hooks/` directory contains lifecycle automation scripts that can be individually enabled in a project's `.claude/settings.json`. They are **not installed automatically** — enable them one at a time to test.
 
 | Hook | Event | What it does |
 |------|-------|-------------|
@@ -123,17 +119,34 @@ Hooks run automatically on Claude Code lifecycle events. They operate outside th
 | `task-completed.js` | TaskCompleted | Auto-commits with `Complete: [description]`, updates status timestamps |
 | `teammate-idle.js` | TeammateIdle | Blocks on merge conflicts or syntax errors in modified files |
 
+To enable a hook, add it to your project's `.claude/settings.json`:
+
+```json
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [{
+          "type": "command",
+          "command": "node /path/to/super-claudio-code/hooks/session-start.js",
+          "timeout": 5
+        }]
+      }
+    ]
+  }
+}
+```
+
 ## Learning System
 
 Institutional knowledge that persists across sessions and plans.
 
 **Storage**: Individual markdown files in `.claude/learnings/` with YAML frontmatter. A lightweight `index.yaml` maps each learning to trigger keywords.
 
-**Capture**: The Stop hook prompts for learning capture after substantial sessions. Format template at `.claude/learnings/config/learnings-config.md`.
+**Capture**: Manual or prompted during sessions. Format template at `.claude/learnings/config/learnings-config.md`.
 
-**Retrieval**: The UserPromptSubmit hook fires on every user message, matches prompt words against trigger keywords (minimum 2 matches), and injects relevant learnings as context. Sub-millisecond — it greps a small index file, not the full learning content.
-
-**Browse**: `durin learning list` shows all learnings with metadata.
+**Browse**: `scc learning list` shows all learnings with metadata.
 
 ## Plan Lifecycle
 
@@ -144,10 +157,10 @@ brainstorm  →  plan  →  implement  →  complete  →  archive
 ```
 
 1. **Brainstorm**: Explore approaches, make decisions
-2. **Plan**: Planning skill runs `durin plan init <name>`, then writes plan.md with decisions, constraints, file manifest
+2. **Plan**: Planning skill runs `scc plan init <name>`, then writes plan.md with decisions, constraints, file manifest
 3. **Implement**: Execute phase by phase, verify at each checkpoint, write handoffs between sessions
-4. **Complete**: Write `.completed` marker when all phases verified
-5. **Archive**: Stop hook detects marker, launches archivist (synthesize archive) + cleanup agent (remove dead code) in parallel
+4. **Complete**: Mark plan as done
+5. **Archive**: Synthesize archive entry, clean up plan directory
 
 ## File Layout
 
@@ -179,7 +192,7 @@ brainstorms/
 
 ## Design Principles
 
-- **CLI handles scaffolding, skills handle judgment, hooks handle automation** — each layer does what it's best at
+- **CLI handles scaffolding, skills handle judgment** — each layer does what it's best at
 - **Intent over implementation** — plans describe what and why, not how
 - **Constraints over instructions** — what NOT to do prevents more mistakes than what to do
 - **Context is the scarcest resource** — every design decision optimizes for the 200K token budget

@@ -1,4 +1,4 @@
-import { mkdir, writeFile, readFile, access, symlink, readlink, unlink, readdir } from 'node:fs/promises';
+import { mkdir, writeFile, access, symlink, readlink, unlink, readdir } from 'node:fs/promises';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
@@ -19,7 +19,7 @@ Project: [project name]
 Description: [one-line description]
 
 ## Active Plans
-[none yet — run \`durin plan init <name>\` to create one]
+[none yet — run \`scc plan init <name>\` to create one]
 `;
 
 const LEARNINGS_CONFIG_TEMPLATE = `# Learning File Template
@@ -110,74 +110,13 @@ export async function initCommand() {
     console.log('  · .claude/learnings/config/learnings-config.md (already exists)');
   }
 
-  // Merge hooks into .claude/settings.json
-  await mergeHooksIntoSettings(cwd);
+  // Hooks disabled — re-enable individually via .claude/settings.json when ready.
+  // See hooks/ directory for available hook scripts.
 
   // Install skills to ~/.claude/commands/ (user-wide, symlinks)
   await installSkills();
 
   console.log('\nDone. Edit .claude/status/project.md to set your project identity.');
-}
-
-async function mergeHooksIntoSettings(cwd) {
-  const settingsPath = join(cwd, '.claude/settings.json');
-  let settings;
-  try {
-    settings = JSON.parse(await readFile(settingsPath, 'utf-8'));
-  } catch {
-    settings = {};
-  }
-
-  // Resolve hooks directory — walk up from this file to find the package root
-  const __dirname = dirname(fileURLToPath(import.meta.url));
-  const hooksDir = resolve(__dirname, '../../hooks');
-
-  const hookDefs = [
-    { event: 'SessionStart', script: 'session-start.js', timeout: 5 },
-    { event: 'UserPromptSubmit', script: 'user-prompt-submit.js', timeout: 5 },
-    { event: 'PostToolUse', script: 'context-monitor.js', timeout: 5 },
-    { event: 'TaskCompleted', script: 'task-completed.js', timeout: 30 },
-    { event: 'Stop', script: 'stop.js', timeout: 10 },
-    { event: 'PreCompact', script: 'pre-compact.js', timeout: 5 },
-    { event: 'TeammateIdle', script: 'teammate-idle.js', timeout: 10 },
-  ];
-
-  if (!settings.hooks) settings.hooks = {};
-
-  let merged = 0;
-  for (const { event, script, timeout } of hookDefs) {
-    const entry = {
-      matcher: "",
-      hooks: [{
-        type: 'command',
-        command: `node ${resolve(hooksDir, script)}`,
-        timeout,
-      }],
-    };
-
-    if (!settings.hooks[event]) {
-      settings.hooks[event] = [entry];
-      merged++;
-    } else {
-      const durinIdx = settings.hooks[event].findIndex(e =>
-        e.hooks?.some(h => h.command?.includes('/durin/hooks/'))
-      );
-      if (durinIdx === -1) {
-        settings.hooks[event].push(entry);
-        merged++;
-      } else {
-        // Repair existing entry (fix null matchers, update paths)
-        settings.hooks[event][durinIdx] = entry;
-      }
-    }
-  }
-
-  await writeFile(settingsPath, JSON.stringify(settings, null, 2) + '\n');
-  if (merged > 0) {
-    console.log(`  ✓ .claude/settings.json (${merged} hooks merged)`);
-  } else {
-    console.log('  · .claude/settings.json (hooks already installed)');
-  }
 }
 
 async function installSkills() {

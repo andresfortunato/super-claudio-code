@@ -9,8 +9,8 @@ import { learningListCommand } from './commands/learning-list.js';
 const program = new Command();
 
 program
-  .name('durin')
-  .description('Durin — Claude Code efficiency framework')
+  .name('scc')
+  .description('Super Claudio Code — Claude Code efficiency framework')
   .version('0.1.0');
 
 program

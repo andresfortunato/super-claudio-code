@@ -3,7 +3,7 @@ __pycache__/
 *.pyc
 .venv/
 
-# Generated locally by durin init / install (not part of framework source)
+# Generated locally by scc init / install (not part of framework source)
 .claude/settings.json
 .claude/settings.local.json
 .claude/status/

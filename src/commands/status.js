@@ -10,7 +10,7 @@ export async function statusCommand() {
   try {
     projectContent = await readFile(join(statusDir, 'project.md'), 'utf-8');
   } catch {
-    console.error('No project status found. Run `durin init` first.');
+    console.error('No project status found. Run `scc init` first.');
     process.exit(1);
   }
 
@@ -19,7 +19,7 @@ export async function statusCommand() {
   try {
     files = await readdir(statusDir);
   } catch {
-    console.error('Cannot read .claude/status/. Run `durin init` first.');
+    console.error('Cannot read .claude/status/. Run `scc init` first.');
     process.exit(1);
   }
 

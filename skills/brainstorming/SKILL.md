@@ -79,7 +79,7 @@ When the brainstorming was about a feature or project the user wants to build, t
 
 **Example**: "I want to add real-time collaboration to our editor" → explore CRDT vs OT → research how Figma and Google Docs handle it → decide on CRDT with Y.js → trigger planning skill with decisions.
 
-Write the summary to `brainstorms/[topic].md` (directory created by `durin init`), then trigger the planning skill. The summary becomes the decisions input — the planning skill reads it and incorporates the decisions rather than re-debating them.
+Write the summary to `brainstorms/[topic].md` (directory created by `scc init`), then trigger the planning skill. The summary becomes the decisions input — the planning skill reads it and incorporates the decisions rather than re-debating them.
 
 **Summary format:**
 ```markdown

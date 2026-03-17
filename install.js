@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
-// Post-install script for Durin.
-// Delegates to `durin init` which handles both directory scaffolding and hook merging.
+// Post-install script for Super Claudio Code.
+// Delegates to `scc init` which handles both directory scaffolding and hook merging.
 // This script exists for npm postinstall — it resolves the project root and runs init.
 
 import { accessSync } from 'node:fs';
@@ -13,7 +13,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 async function main() {
   const projectRoot = findProjectRoot();
 
-  console.log('Durin — setting up project...\n');
+  console.log('Super Claudio Code — setting up project...\n');
 
   const { initCommand } = await import('./src/commands/init.js');
   const origCwd = process.cwd();
@@ -21,7 +21,7 @@ async function main() {
   await initCommand();
   process.chdir(origCwd);
 
-  console.log('\nDurin ready. Run `durin status` to verify.');
+  console.log('\nSuper Claudio Code ready. Run `scc status` to verify.');
 }
 
 function findProjectRoot() {
@@ -40,6 +40,6 @@ function findProjectRoot() {
 }
 
 main().catch(err => {
-  console.error('Durin install failed:', err.message);
+  console.error('SCC install failed:', err.message);
   process.exit(1);
 });
