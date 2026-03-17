@@ -199,8 +199,15 @@ brainstorms/
   <topic>.md                    — brainstorming session outputs
 ```
 
-## Reference Workflows (last update 03/13/2026)
+## Some reflections
 
+- We shouldn't assign too much weight to plans, assuming almost automatic execution. Iteration makes planning better. Plans are the map, not the territory. 
+- Many plans tend to micromanage implementation, which is counterproductive because in reality plans change all the time. Micromanaged plans constrain the implementation agent's problem-solving capacity. 
+- Baking code snippets in plans is a waste of tokens. The implementation agent or session will re-read the codebase.
+- We want to minimize the ratio of .md lines to code execution that is required to achieve high quality results
+
+## Reference Workflows (last update 03/13/2026)
+ 
 Here is a review of several popular Claude Code workflow repos done by Claudio and I. Each one contributed ideas — and cautionary lessons. Claudio's full research notes live in `research/`.
 
 ### Superpowers (`obra/superpowers`)
@@ -216,9 +223,9 @@ A pure-.md workflow with minimal automation. Single-file plans, checkbox progres
 **Cons:**
 - Single-file plans don't scale — no selective context loading for large features
 - No session handoff mechanism — relies entirely on plan checkboxes + git state
-- Skills are shallow: good structure but lack explanations of WHY, leading to generic results
-- Bakes exact code snippets and file paths into plans, violating the "intent over implementation" principle
-- ~600-line TDD skill mostly fights rationalizations instead of teaching the method
+- Skills have good structure but lack explanations of WHY, leading to generic results
+- Bakes exact code snippets and file paths into plans, which produces token waste
+- I really like the Socratic method in the brainstorming skill, but it assigns Claude the role of Socrates. The one asking questions should be the user since questions shape conversations. We too the mayeutic idea and reframed it with different roles. 
 
 ### Get Shit Done / GSD (`coleam00/get-shit-done`)
 
@@ -249,7 +256,8 @@ A learning-focused plugin with 47 skills, 28 agents, and zero hooks. All orchest
 
 **Cons:**
 - No hooks means learnings only surface when user explicitly runs a workflow command
-- Auto-invoke trigger phrases ("that worked", "it's fixed") are prompt-engineering only — unreliable
+- Search over learnings includes full learnings docs, no index.
+- Auto-invoke trigger phrases ("that worked", "it's fixed") are prompt-engineering only
 - No pruning mechanism — learning set grows forever with no staleness detection
 - 47 skills is overwhelming — many users won't discover most of them
 - The `/lfg` pipeline is opinionated and rigid (plan → deepen → work → review → resolve → test → video)
@@ -265,10 +273,7 @@ A comprehensive plugin and curated guide. 20+ hooks across 6 lifecycle events, a
 - Dynamic system prompt injection via shell aliases for different work modes
 
 **Cons:**
-- Too much happening under the hood — 20+ hooks firing across 6 events creates unpredictable behavior
-- More of an infrastructure toolkit than a coherent workflow — lacks a clear brainstorm→plan→implement flow
-- Some vocabulary and concepts are obscure (instincts, continuous learning, pattern evolution)
-- Session evaluation hooks add latency without clear ROI for most users
+- Too much happening under the hood — 20+ hooks firing across 6 events
 
 ### Spec Kit (`spec-kit/spec-kit`)
 
@@ -284,7 +289,6 @@ A Python CLI-first workflow built around Spec-Driven Development. Shell scripts 
 - Rigid three-phase pipeline (spec → plan → tasks) assumes waterfall-like progression
 - Heavy on ceremony — specs, plans, tasks, research, data models, contracts, checklists per feature
 - No session handoff beyond task checkboxes — no handoff notes, no "what didn't work"
-- Supports 20+ AI agents but spreads effort thin — Claude-specific features are underdeveloped
 
 ### OpenSpec (`Fission-AI/OpenSpec`)
 
@@ -297,10 +301,10 @@ A TypeScript CLI with a schema-driven artifact graph. The CLI scaffolds director
 - Clean `openspec status --json` gives any session a complete picture of progress
 
 **Cons:**
-- Over-abstracted for most projects — the artifact graph, DAG computation, and schema system add complexity without proportional benefit
+- Might be over-abstracted for some projects — the artifact graph, DAG computation, and schema system add complexity without proportional benefit
 - No learning system or institutional knowledge
 - No session handoff beyond file existence checks
-- Delta specs for brownfield work (ADDED/MODIFIED/REMOVED sections) are clever but rarely exercised in practice
+- Delta specs for brownfield work (ADDED/MODIFIED/REMOVED sections) are clever but might rarely exercised in practice
 
 ### Cross-cutting patterns we adopted
 
