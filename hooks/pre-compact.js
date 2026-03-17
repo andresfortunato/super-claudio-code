@@ -1,20 +1,27 @@
 #!/usr/bin/env node
 
-// PreCompact hook — remind to write handoff before context is compacted.
-// PreCompact is informational only (can't block), so we inject a reminder.
+// PreCompact hook — remind to write handoff and capture learnings before
+// context is compacted. Fires on both auto and manual compaction.
+// Informational only (cannot block).
 
 async function main() {
   const input = JSON.parse(await readStdin());
 
-  // Only remind on auto-compaction (manual compaction is intentional)
-  if (input.trigger === 'auto') {
-    process.stdout.write(
-      'IMPORTANT: Context is about to be compacted. If you have not written ' +
-      'the handoff yet, the compacted context will lose implementation details. ' +
-      'After compaction, update the plan handoff.md with current status, ' +
-      'decisions made, and next steps.\n'
-    );
-  }
+  const reminders = [];
+
+  reminders.push(
+    'Context is about to be compacted. Before losing detail:'
+  );
+  reminders.push(
+    '• Update the plan handoff.md with current status, decisions made, and next steps.'
+  );
+  reminders.push(
+    '• Were there any surprises, gotchas, or insights worth preserving as learnings? ' +
+    'If so, write to .claude/learnings/ (see config/learnings-config.md for format) ' +
+    'and append to index.yaml.'
+  );
+
+  process.stdout.write(reminders.join('\n') + '\n');
 }
 
 function readStdin() {

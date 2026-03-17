@@ -8,7 +8,8 @@
     "skills/planning/SKILL.md",
     "skills/implementation/SKILL.md",
     "skills/agent-teams/SKILL.md",
-    "skills/tdd/SKILL.md"
+    "skills/tdd/SKILL.md",
+    "skills/learning-capture/SKILL.md"
   ],
   "postInstall": "node install.js"
 }

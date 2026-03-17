@@ -1,8 +1,13 @@
 # Super Claudio Code
 
-A Claude Code efficiency framework — structured planning, context management, session orchestration, and automated learning.
+This is my Claude Code workflow. It's a work in progress where I test different tools and ideas and document them. The workflow is focused on:
 
-Super Claudio Code makes Claude Code sessions more efficient by providing two automation layers that work together: a **CLI** for scaffolding and **skills** for orchestration.
+- Optimizing planning so that we increase plan quality and reduce the ratio of .md lines to code at the same time
+- Context management so that we avoid context rot and codebase re-exploration
+- Multi-session orchestration so that we don't worry about referencing files or summaries any more
+- Automated learning to take notes of relevant challenges or solutions.
+
+Super Claudio Code has two layers: a **CLI** for scaffolding and **skills** for orchestration.
 
 ## Installation
 
@@ -105,6 +110,10 @@ Orchestrates parallel work with independent Claude instances. Handles file owner
 
 Canon test-driven development (https://tidyfirst.substack.com/p/canon-tdd). Behavioral test lists during planning, RED-GREEN-REFACTOR cycles during execution. Separate skill — used alongside implementation when the plan calls for it.
 
+### Learning Capture
+
+Captures institutional knowledge as individual files in `.claude/learnings/`. Supports two learning types: **gotchas** (Problem/Solution/Prevention) for mistakes and counterintuitive behavior, and **insights** (Discovery/Why it matters/When to apply) for useful patterns and observations. Triggered by the pre-compact hook, user request, or when Claude notices something worth preserving.
+
 ## Hooks (experimental, disabled by default)
 
 The `hooks/` directory contains lifecycle automation scripts that can be individually enabled in a project's `.claude/settings.json`. They are **not installed automatically** — enable them one at a time to test.
@@ -113,10 +122,8 @@ The `hooks/` directory contains lifecycle automation scripts that can be individ
 |------|-------|-------------|
 | `session-start.js` | SessionStart | Injects project status + active plan statuses into session context |
 | `user-prompt-submit.js` | UserPromptSubmit | Matches prompt against learning triggers, injects relevant learnings |
-| `context-monitor.js` | PostToolUse | Warns at 65% and 75% context usage |
-| `stop.js` | Stop | Enforces handoff writing, detects plan completion, prompts for learning capture |
-| `pre-compact.js` | PreCompact | Reminds to write handoff before auto-compaction |
-| `task-completed.js` | TaskCompleted | Auto-commits with `Complete: [description]`, updates status timestamps |
+| `stop.js` | Stop | Detects plan completion (.completed marker), triggers archival agents |
+| `pre-compact.js` | PreCompact | Reminds to write handoff and capture learnings before compaction |
 | `teammate-idle.js` | TeammateIdle | Blocks on merge conflicts or syntax errors in modified files |
 
 To enable a hook, add it to your project's `.claude/settings.json`:
@@ -144,7 +151,7 @@ Institutional knowledge that persists across sessions and plans.
 
 **Storage**: Individual markdown files in `.claude/learnings/` with YAML frontmatter. A lightweight `index.yaml` maps each learning to trigger keywords.
 
-**Capture**: Manual or prompted during sessions. Format template at `.claude/learnings/config/learnings-config.md`.
+**Capture**: The pre-compact hook reminds you to capture learnings before context compaction. Otherwise voluntary — ask Claude or capture manually. Format template at `.claude/learnings/config/learnings-config.md`.
 
 **Browse**: `scc learning list` shows all learnings with metadata.
 
@@ -190,14 +197,6 @@ brainstorms/
   <topic>.md                    — brainstorming session outputs
 ```
 
-## Design Principles
-
-- **CLI handles scaffolding, skills handle judgment** — each layer does what it's best at
-- **Intent over implementation** — plans describe what and why, not how
-- **Constraints over instructions** — what NOT to do prevents more mistakes than what to do
-- **Context is the scarcest resource** — every design decision optimizes for the 200K token budget
-- **Exception-based escalation** — only surface issues that affect plan direction, handle details inline
-- **Handoff over one more task** — a good handoff saves the next session 15-30% of its context
 
 ## License
 
