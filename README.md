@@ -7,7 +7,7 @@ This is my Claude Code workflow. It's a work in progress where I test different 
 - Multi-session orchestration so that we don't worry about referencing files or summaries any more
 - Automated learning to take notes of relevant challenges or solutions.
 
-Super Claudio Code has two layers: a **CLI** for scaffolding and **skills** for orchestration.
+Super Claudio Code (SCC) is based on my experience working with Claude Code and testing or reviewing existing popular workflows (see 'Reference Workflows' section). SCC has two layers: a **CLI** for scaffolding and **skills** for orchestration.
 
 ## Installation
 
@@ -151,7 +151,7 @@ Institutional knowledge that persists across sessions and plans.
 
 **Storage**: Individual markdown files in `.claude/learnings/` with YAML frontmatter. A lightweight `index.yaml` maps each learning to trigger keywords.
 
-**Capture**: The pre-compact hook reminds you to capture learnings before context compaction. Otherwise voluntary — ask Claude or capture manually. Format template at `.claude/learnings/config/learnings-config.md`.
+**Capture**: The pre-compact hook reminds you to capture learnings before context compaction. Otherwise voluntary — ask Claude or capture manually via triggering learning skill. Format template at `.claude/learnings/config/learnings-config.md`.
 
 **Browse**: `scc learning list` shows all learnings with metadata.
 
@@ -197,6 +197,119 @@ brainstorms/
   <topic>.md                    — brainstorming session outputs
 ```
 
+## Reference Workflows (last update 03/13/2026)
+
+Here is a review of several popular Claude Code workflow repos done by Claudio and I. Each one contributed ideas — and cautionary lessons. Claudio's full research notes live in `research/`.
+
+### Superpowers (`obra/superpowers`)
+
+A pure-.md workflow with minimal automation. Single-file plans, checkbox progress tracking, and subagent-driven execution. The only hook is a SessionStart that injects the skill loader.
+
+**Pros:**
+- Elegant simplicity — single-file plans with no scaffolding overhead
+- Subagent isolation prevents context bleed between tasks
+- Plan review loop (spec reviewer + plan reviewer) before execution
+- Minimal token cost (~5-10KB per skill invocation)
+
+**Cons:**
+- Single-file plans don't scale — no selective context loading for large features
+- No session handoff mechanism — relies entirely on plan checkboxes + git state
+- Skills are shallow: good structure but lack explanations of WHY, leading to generic results
+- Bakes exact code snippets and file paths into plans, violating the "intent over implementation" principle
+- ~600-line TDD skill mostly fights rationalizations instead of teaching the method
+
+### Get Shit Done / GSD (`coleam00/get-shit-done`)
+
+The heaviest framework. A full Node.js CLI (`gsd-tools.cjs`, 174KB), 120+ .md files (~808KB total), and a hierarchical `.planning/` directory with STATE.md, ROADMAP.md, REQUIREMENTS.md, per-phase plans, and verification reports.
+
+**Pros:**
+- Programmatic state manipulation — STATE.md updates, progress bars, and plan advancement handled by CLI, not LLM
+- `.continue-here.md` is a clean session handoff artifact (created on pause, deleted on resume)
+- Rich YAML frontmatter on plans enables dependency tracking and execution wave ordering
+- Context monitor hook warns at usage thresholds
+
+**Cons:**
+- Massive token footprint — a single workflow invocation pulls 50-80KB of system context
+- Over-engineered: XML task structures, requirement traceability (REQ-IDs), milestone archival — overkill for most projects
+- High .md-to-code ratio wastes tokens on ceremony
+- Assumes near-automatic execution — plans are treated as step-by-step instructions rather than intent + constraints that adapt to reality
+- Context monitor was hardcoded to 200K window (wrong for 1M models)
+
+### Compound Engineering (`EveryInc/compound-engineering-plugin`)
+
+A learning-focused plugin with 47 skills, 28 agents, and zero hooks. All orchestration through skills and the `/lfg` automation pipeline. The standout feature is its document-based institutional knowledge system with YAML-schema-validated learnings.
+
+**Pros:**
+- Best learning system of any workflow — structured YAML schema, grep-based retrieval, "Required Reading" promotion path
+- Pull-based learning injection (only during `/ce:plan` and `/ce:review`) avoids context pollution
+- Context budget awareness — compact-safe mode for low-context situations
+- Multi-agent capture: 5 parallel subagents analyze a solution from different angles
+
+**Cons:**
+- No hooks means learnings only surface when user explicitly runs a workflow command
+- Auto-invoke trigger phrases ("that worked", "it's fixed") are prompt-engineering only — unreliable
+- No pruning mechanism — learning set grows forever with no staleness detection
+- 47 skills is overwhelming — many users won't discover most of them
+- The `/lfg` pipeline is opinionated and rigid (plan → deepen → work → review → resolve → test → video)
+
+### Everything Claude Code / ECC (`affaan-m/everything-claude-code`)
+
+A comprehensive plugin and curated guide. 20+ hooks across 6 lifecycle events, a tmux-worktree orchestrator for parallel workers, and a session persistence system. More infrastructure than workflow.
+
+**Pros:**
+- Best session management: "What Did NOT Work" section prevents retrying failed approaches
+- tmux-worktree orchestrator takes a JSON plan and scaffolds parallel Claude workers automatically
+- Hook profile system (minimal/standard/strict) lets users dial automation up or down
+- Dynamic system prompt injection via shell aliases for different work modes
+
+**Cons:**
+- Too much happening under the hood — 20+ hooks firing across 6 events creates unpredictable behavior
+- More of an infrastructure toolkit than a coherent workflow — lacks a clear brainstorm→plan→implement flow
+- Some vocabulary and concepts are obscure (instincts, continuous learning, pattern evolution)
+- Session evaluation hooks add latency without clear ROI for most users
+
+### Spec Kit (`spec-kit/spec-kit`)
+
+A Python CLI-first workflow built around Spec-Driven Development. Shell scripts scaffold directories and copy templates; AI fills in the content. The cleanest separation of "scripts do mechanical work, AI does thinking."
+
+**Pros:**
+- Cleanest scaffolding pattern: scripts create structure + output JSON paths, SKILL.md orchestrates AI to populate
+- Technology-agnostic spec format with Given/When/Then acceptance scenarios
+- Templates are separate files — AI reads them on demand instead of reproducing from memory
+- Constitution pattern: immutable principles that constrain what AI can generate (gates before proceeding)
+
+**Cons:**
+- Rigid three-phase pipeline (spec → plan → tasks) assumes waterfall-like progression
+- Heavy on ceremony — specs, plans, tasks, research, data models, contracts, checklists per feature
+- No session handoff beyond task checkboxes — no handoff notes, no "what didn't work"
+- Supports 20+ AI agents but spreads effort thin — Claude-specific features are underdeveloped
+
+### OpenSpec (`Fission-AI/OpenSpec`)
+
+A TypeScript CLI with a schema-driven artifact graph. The CLI scaffolds directories, computes build order via topological sort, and delivers templates + instructions as JSON. The AI follows a DAG of artifacts (proposal → specs → design → tasks).
+
+**Pros:**
+- Most sophisticated CLI: topological sorting of artifact dependencies, filesystem-based state detection
+- Schema-driven: add a new artifact type to `schema.yaml` and the CLI handles build order, templates, and instructions
+- Minimal templates (50-200 bytes each) — AI fills in content, not structure
+- Clean `openspec status --json` gives any session a complete picture of progress
+
+**Cons:**
+- Over-abstracted for most projects — the artifact graph, DAG computation, and schema system add complexity without proportional benefit
+- No learning system or institutional knowledge
+- No session handoff beyond file existence checks
+- Delta specs for brownfield work (ADDED/MODIFIED/REMOVED sections) are clever but rarely exercised in practice
+
+### Cross-cutting patterns we adopted
+
+| Pattern | Source | How SCC uses it |
+|---------|--------|----------------|
+| CLI scaffolds, skills orchestrate | Spec Kit, OpenSpec | `scc init` and `scc plan init` handle directories; skills handle judgment |
+| Multi-file plans with selective loading | Original (contrast with Superpowers' single-file) | `plan.md` + `phases/` + `context/` + `handoff.md` |
+| Handoff over one more task | ECC's session management | `handoff.md` overwritten each session with status + next steps |
+| Keyword-triggered learning retrieval | Compound Engineering's grep-based approach | `index.yaml` + `UserPromptSubmit` hook matches keywords |
+| Phase-level execution loops | GSD insight, simplified | Read files once at phase start, lightweight checkpoints per task |
+| Intent over implementation in plans | Lesson from Superpowers' code-snippet plans | Plans describe what and why, not how |
 
 ## License
 
