@@ -61,6 +61,11 @@ Triggers should be words that would appear in a user's prompt when this learning
 The UserPromptSubmit hook matches prompts against these keywords (minimum 2 word matches to surface).
 `;
 
+const CLAUDE_MD_TEMPLATE = `# Project Instructions
+
+@.claude/status/project.md
+`;
+
 const INDEX_YAML_TEMPLATE = `# Learning trigger index — searched by UserPromptSubmit hook
 # Each entry maps a learning file to its trigger keywords
 # Format:
@@ -110,10 +115,16 @@ export async function initCommand() {
     console.log('  · .claude/learnings/config/learnings-config.md (already exists)');
   }
 
-  // Hooks disabled — re-enable individually via .claude/settings.json when ready.
-  // See hooks/ directory for available hook scripts.
+  // Write CLAUDE.md with @ import for project status if it doesn't exist
+  const claudeMdPath = join(cwd, 'CLAUDE.md');
+  if (!(await fileExists(claudeMdPath))) {
+    await writeFile(claudeMdPath, CLAUDE_MD_TEMPLATE);
+    console.log('  ✓ CLAUDE.md (with @import for project status)');
+  } else {
+    console.log('  · CLAUDE.md (already exists)');
+  }
 
-  // Install skills to ~/.claude/commands/ (user-wide, symlinks)
+  // Install skills to ~/.claude/skills/ (user-wide, symlinks)
   await installSkills();
 
   console.log('\nDone. Edit .claude/status/project.md to set your project identity.');
@@ -157,9 +168,9 @@ async function installSkills() {
   }
 
   if (installed > 0) {
-    console.log(`  ✓ ~/.claude/commands/ (${installed} skills linked)`);
+    console.log(`  ✓ ~/.claude/skills/ (${installed} skills linked)`);
   } else {
-    console.log('  · ~/.claude/commands/ (skills already installed)');
+    console.log('  · ~/.claude/skills/ (skills already installed)');
   }
 }
 
