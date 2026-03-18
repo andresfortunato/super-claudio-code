@@ -3,6 +3,9 @@ name: planning
 description: Guide for writing implementation plans that give Claude the right level of detail — intent and constraints, not code snippets and step-by-step instructions. Use when brainstorming features, designing implementations, writing plans for multi-step tasks, or when asked to plan, architect, or think through an approach. The key trigger is whether there are decisions that benefit from deliberation before execution — trade-offs to weigh, architectural choices, multiple integration points, or ambiguous scope. Don't trigger for tasks with a single obvious implementation path (rename a variable, fix a typo, change a font) where reading the code makes the implementation obvious.
 ---
 
+## Project identity
+!`cat .claude/status/project.md 2>/dev/null || echo "No project.md yet — see Project Identity section below"`
+
 # Planning
 
 ## When to Plan

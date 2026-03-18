@@ -3,6 +3,12 @@ name: implement
 description: Implement an active plan across one or more sessions. Use when a plan exists in plan/plan-[name]/ and the user wants to start or continue implementing a plan. Triggers on "execute," "implement," "start building," "continue implementation," "pick up where we left off," or any indication the user wants to move from planning to coding. Also triggers when resuming a partially-completed plan — check for handoff.md to determine where to pick up.
 ---
 
+## Active plans
+!`ls -1d plan/plan-*/ 2>/dev/null | sed 's|plan/||;s|/$||' || echo "No plans found"`
+
+## Latest handoff
+!`for f in plan/plan-*/handoff.md; do [ -f "$f" ] && echo "=== $f ===" && cat "$f" && echo; done 2>/dev/null || echo "No handoffs found"`
+
 # Implementation
 
 ## When to Implement
