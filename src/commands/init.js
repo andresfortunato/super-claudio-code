@@ -122,7 +122,7 @@ export async function initCommand() {
 async function installSkills() {
   const __dirname = dirname(fileURLToPath(import.meta.url));
   const skillsSource = resolve(__dirname, '../../skills');
-  const commandsDir = join(homedir(), '.claude', 'commands');
+  const commandsDir = join(homedir(), '.claude', 'skills');
 
   await mkdir(commandsDir, { recursive: true });
 
