@@ -4,7 +4,9 @@ description: Guide for writing implementation plans that give Claude the right l
 ---
 
 ## Project identity
-!`cat .claude/status/project.md 2>/dev/null || echo "No project.md yet — see Project Identity section below"`
+!`cat .claude/status/project.md 2>/dev/null || echo "⚠ NO PROJECT IDENTITY — you MUST create .claude/status/project.md before proceeding. Ask the user about their project first."`
+
+**IMPORTANT: If the line above says "NO PROJECT IDENTITY", stop and handle this before doing anything else.** Ask the user: "There's no project identity file yet. Want me to create one? What does this project do and what's the current focus?" Then explore the codebase (package.json/pyproject.toml, README, directory structure) and recent git history (`git log --oneline -20`), and write `.claude/status/project.md` — 3-5 lines max: project name, what it does, current focus, what's next. No stack info (that belongs in CLAUDE.md).
 
 # Planning
 
@@ -114,31 +116,6 @@ A well-structured plan covers these elements, adapted to the project's needs:
 ```
 
 This isn't a rigid template — scale it to the task. A two-file change doesn't need phases. A complex migration might need per-phase plan files. The structure serves the plan, not the other way around.
-
-## Project Identity
-
-Before planning, check if `.claude/status/project.md` exists and is populated.
-
-**Why project.md matters**: It gives every session — yours and future ones — immediate context about what this project is and where it's headed. Unlike CLAUDE.md (which holds stable instructions and conventions), project.md captures current state: what the project does today, what's being worked on, and what's coming next. It's updated more frequently — whenever the project's direction shifts, a major milestone lands, or priorities change.
-
-**If project.md is missing or empty**, ask the user:
-
-> "There's no project identity file yet. Want me to create one? I'll need to know a few things: what does this project do, who uses it, and what's the current focus or next milestone?"
-
-Then:
-1. Run a codebase exploration (package.json/pyproject.toml, README, directory structure, key entry points) to understand what exists
-2. Check recent git history (`git log --oneline -20`) to understand recent momentum
-3. Ask the user about current priorities and near-term direction — the code shows what IS, the user knows what's NEXT
-4. Write `.claude/status/project.md` — **3-5 lines max**. Only what changes: identity, current focus, what's next. Tech stack, architecture, and conventions belong in CLAUDE.md. Example:
-
-```markdown
-# Cumply
-Trade compliance SaaS — HTS/TIGIE classification, ruling search, tariff calculation.
-Current focus: expert chat feature (LLM-powered classification assistant).
-Next: USMCA origin determination module.
-```
-
-The session-start hook injects this into every session automatically.
 
 ## Plan Setup
 
