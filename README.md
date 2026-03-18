@@ -123,30 +123,34 @@ Orchestrates parallel work with independent Claude instances. Handles file owner
 
 Captures institutional knowledge as individual files in `.claude/learnings/`. Supports two learning types: **gotchas** (Problem/Solution/Prevention) for mistakes and counterintuitive behavior, and **insights** (Discovery/Why it matters/When to apply) for useful patterns and observations. Triggered by the pre-compact hook, user request, or when Claude notices something worth preserving.
 
-## Hooks (experimental, disabled by default)
+## Hooks
 
-The `hooks/` directory contains lifecycle automation scripts that can be individually enabled in a project's `.claude/settings.json`. They are **not installed automatically** — enable them one at a time to test.
+Three hooks are enabled in user-level settings (`~/.claude/settings.json`) and fire across all projects:
+
+| Hook | Event | What it does |
+|------|-------|-------------|
+| `user-prompt-submit.js` | UserPromptSubmit | Matches prompt against learning triggers, injects relevant learnings |
+| `stop.js` | Stop | Detects plan completion (.completed marker), triggers archival agents |
+| `pre-compact.js` | PreCompact | Reminds to write handoff and capture learnings before compaction |
+
+One additional hook is available but not enabled:
 
 | Hook | Event | What it does |
 |------|-------|-------------|
 | `session-start.js` | SessionStart | Injects project status + active plan statuses into session context |
-| `user-prompt-submit.js` | UserPromptSubmit | Matches prompt against learning triggers, injects relevant learnings |
-| `stop.js` | Stop | Detects plan completion (.completed marker), triggers archival agents |
-| `pre-compact.js` | PreCompact | Reminds to write handoff and capture learnings before compaction |
-| `teammate-idle.js` | TeammateIdle | Blocks on merge conflicts or syntax errors in modified files |
 
-To enable a hook, add it to your project's `.claude/settings.json`:
+To enable hooks, add them to `~/.claude/settings.json` (user-level, all projects) or a project's `.claude/settings.json`:
 
 ```json
 {
   "hooks": {
-    "SessionStart": [
+    "Stop": [
       {
         "matcher": "",
         "hooks": [{
           "type": "command",
-          "command": "node /path/to/super-claudio-code/hooks/session-start.js",
-          "timeout": 5
+          "command": "node /path/to/super-claudio-code/hooks/stop.js",
+          "timeout": 10
         }]
       }
     ]

@@ -99,7 +99,7 @@ Teammates can message each other and the lead. This matters when:
 
 ### Quality gates
 
-The framework's TeammateIdle and TaskCompleted hooks enforce quality criteria automatically — teammates can't finish until merge conflicts are resolved and JS files pass syntax checks, and tasks auto-commit with template messages on completion. These run outside any agent's context at zero token cost. Hooks are configured in `hooks/hooks.json` — if not installed, run the framework's install script to set them up.
+Each teammate should verify their own work before reporting results: resolve merge conflicts, check for syntax errors, and run any relevant tests. The lead reviews results before merging.
 
 ## Output Collection
 
@@ -147,7 +147,7 @@ After all teammates finish:
 Each teammate works on 1-2 focused tasks. Wait until they finish, review results. The lead decides: merge, redirect, or launch a next round. No mid-execution coordination needed — the tasks are short enough to complete and then assess.
 
 ### Long-running tasks
-Teammates may work for extended periods. Use TeammateIdle hooks to enforce quality gates. Teammates should message the lead when they discover something significant that might affect the broader plan.
+Teammates may work for extended periods. Teammates should message the lead when they discover something significant that might affect the broader plan.
 
 ### When a teammate discovers a plan-affecting issue
 

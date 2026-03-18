@@ -119,6 +119,7 @@ The plan is a living document. Implementation updates it when reality demands, b
 - Task requires >3 debugging cycles: document the blocker in handoff, stop
 - Escalation trigger fires: stop, surface to user
 - Phase complete: write handoff, stop — even if context remains (clean session boundary)
+- **All phases complete**: ask user to confirm completion, write `.completed` marker (see Plan Completion below), then stop
 - Never start a new phase unless the current phase is verified
 
 After each task, briefly assess context usage. Don't start new work if you can't finish it.
@@ -145,11 +146,18 @@ Write the handoff while your context is still fresh — not at the last moment w
 
 ## Plan Completion
 
-When all phases are verified and the user confirms the plan is done:
+**IMPORTANT: When all phases are verified, you MUST ask the user before stopping:**
 
-1. Write the `.completed` marker: `touch plan/plan-[name]/.completed`
-2. The framework's Stop hook detects the marker and launches a two-agent team (Haiku, tmux mode):
-   - **Archivist**: synthesizes `archive/plan-[name].md`, updates `archive/index.md`, cleans up `plan/plan-[name]/`, updates `.claude/status/`
-   - **Cleanup agent**: scans source files from the plan's file manifest for dead code introduced during implementation (unused imports, orphaned functions, unreachable code), removes them, commits
+> "All phases are verified. Should I mark this plan as complete and trigger archival?"
 
-Both agents run in parallel with fresh context — they don't inherit the lead's degraded session. The plan's `output/` directory is cleaned up as part of archival.
+If the user confirms, immediately run:
+
+```bash
+touch plan/plan-[name]/.completed
+```
+
+Do NOT skip this step. Do NOT stop the session before writing the marker. The `.completed` file is what triggers the archival process — without it, the plan sits in `plan/` forever.
+
+After writing the marker, the Stop hook will detect it and instruct you to launch a two-agent team:
+- **Archivist** (read `hooks/agents/archivist.md`): synthesizes `archive/plan-[name].md`, updates `archive/index.md`, cleans up `plan/plan-[name]/`, updates `.claude/status/`
+- **Cleanup agent** (read `hooks/agents/cleanup.md`): scans source files from the plan's file manifest for dead code, removes it, commits
