@@ -17,7 +17,7 @@ async function main() {
   );
   reminders.push(
     '• Were there any surprises, gotchas, or insights worth preserving as learnings? ' +
-    'If so, write to .claude/learnings/ (see config/learnings-config.md for format) ' +
+    'If so, write to .scc/learnings/ (see config/learnings-config.md for format) ' +
     'and append to index.yaml.'
   );
 

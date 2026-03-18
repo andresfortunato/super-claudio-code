@@ -32,7 +32,7 @@ This gives you the `scc` CLI globally. Then, in each project:
 scc init
 ```
 
-This scaffolds project directories (`.claude/status/`, `.claude/learnings/`, `plan/`, `archive/`, `brainstorms/`) and installs skills to `~/.claude/commands/`. Idempotent — safe to run again.
+This scaffolds project directories (`.scc/status/`, `.scc/learnings/`, `plan/`, `archive/`, `brainstorms/`) and installs skills to `~/.claude/skills/`. Idempotent — safe to run again.
 
 Verify:
 
@@ -64,8 +64,8 @@ scc learning list     agent-teams
 
 Scaffolds project directories for the framework:
 ```
-.claude/status/           — project and plan status (shared state)
-.claude/learnings/        — institutional knowledge across sessions
+.scc/status/              — project and plan status (shared state)
+.scc/learnings/           — institutional knowledge across sessions
 plan/                     — active plan directories
 archive/                  — completed plan archives
 brainstorms/              — brainstorming session outputs
@@ -85,7 +85,7 @@ plan/plan-<name>/
 └── context/               — decision-enabling codebase summaries
 ```
 
-Also creates `.claude/status/plan-<name>.md` for cross-skill status tracking.
+Also creates `.scc/status/plan-<name>.md` for cross-skill status tracking.
 
 ### `scc status`
 
@@ -121,7 +121,7 @@ Orchestrates parallel work with independent Claude instances. Handles file owner
 
 ### Learning Capture
 
-Captures institutional knowledge as individual files in `.claude/learnings/`. Supports two learning types: **gotchas** (Problem/Solution/Prevention) for mistakes and counterintuitive behavior, and **insights** (Discovery/Why it matters/When to apply) for useful patterns and observations. Triggered by the pre-compact hook, user request, or when Claude notices something worth preserving.
+Captures institutional knowledge as individual files in `.scc/learnings/`. Supports two learning types: **gotchas** (Problem/Solution/Prevention) for mistakes and counterintuitive behavior, and **insights** (Discovery/Why it matters/When to apply) for useful patterns and observations. Triggered by the pre-compact hook, user request, or when Claude notices something worth preserving.
 
 ## Hooks
 
@@ -159,9 +159,9 @@ To enable hooks, add them to `~/.claude/settings.json` (user-level, all projects
 
 Institutional knowledge that persists across sessions and plans.
 
-**Storage**: Individual markdown files in `.claude/learnings/` with YAML frontmatter. A lightweight `index.yaml` maps each learning to trigger keywords.
+**Storage**: Individual markdown files in `.scc/learnings/` with YAML frontmatter. A lightweight `index.yaml` maps each learning to trigger keywords.
 
-**Capture**: The pre-compact hook reminds you to capture learnings before context compaction. Otherwise voluntary — ask Claude or capture manually via triggering learning skill. Format template at `.claude/learnings/config/learnings-config.md`.
+**Capture**: The pre-compact hook reminds you to capture learnings before context compaction. Otherwise voluntary — ask Claude or capture manually via triggering learning skill. Format template at `.scc/learnings/config/learnings-config.md`.
 
 **Browse**: `scc learning list` shows all learnings with metadata.
 
@@ -182,7 +182,7 @@ brainstorm  →  plan  →  implement  →  complete  →  archive
 ## File Layout
 
 ```
-.claude/
+.scc/
   status/
     project.md                  — project identity + current focus (created by planning skill, not scc init)
     plan-<name>.md              — per-plan status (phase, task, blocked)

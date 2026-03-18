@@ -40,10 +40,10 @@ export async function planInitCommand(name) {
   console.log(`  ✓ plan/plan-${name}/context/`);
 
   // Create status file for this plan
-  const statusDir = join(cwd, '.claude/status');
+  const statusDir = join(cwd, '.scc/status');
   await mkdir(statusDir, { recursive: true });
   await writeFile(join(statusDir, `plan-${name}.md`), statusTemplate(name));
-  console.log(`  ✓ .claude/status/plan-${name}.md`);
+  console.log(`  ✓ .scc/status/plan-${name}.md`);
 
   console.log(`\nDone. Open plan/plan-${name}/plan.md to start planning.`);
 }

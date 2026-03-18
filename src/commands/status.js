@@ -3,7 +3,7 @@ import { join } from 'node:path';
 
 export async function statusCommand() {
   const cwd = process.cwd();
-  const statusDir = join(cwd, '.claude/status');
+  const statusDir = join(cwd, '.scc/status');
 
   // Read project identity (optional — created by planning skill, not scc init)
   let projectContent;
@@ -18,7 +18,7 @@ export async function statusCommand() {
   try {
     files = await readdir(statusDir);
   } catch {
-    console.log('No .claude/status/ directory. Run `scc init` first.');
+    console.log('No .scc/status/ directory. Run `scc init` first.');
     process.exit(1);
   }
 

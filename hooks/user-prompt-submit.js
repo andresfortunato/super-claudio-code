@@ -18,7 +18,7 @@ async function main() {
 
   if (!prompt) return;
 
-  const indexPath = join(cwd, '.claude/learnings/index.yaml');
+  const indexPath = join(cwd, '.scc/learnings/index.yaml');
 
   // Parse index.yaml
   let entries;
@@ -41,7 +41,7 @@ async function main() {
   for (const match of matches.slice(0, MAX_LEARNINGS_INJECTED)) {
     try {
       const content = await readFile(
-        join(cwd, '.claude/learnings', match.file),
+        join(cwd, '.scc/learnings', match.file),
         'utf-8'
       );
       learnings.push(content.trim());

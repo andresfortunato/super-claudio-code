@@ -9,7 +9,7 @@ import { join } from 'node:path';
 async function main() {
   const input = JSON.parse(await readStdin());
   const cwd = input.cwd || process.cwd();
-  const statusDir = join(cwd, '.claude/status');
+  const statusDir = join(cwd, '.scc/status');
 
   const parts = [];
 

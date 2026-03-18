@@ -61,7 +61,7 @@ When an approach fails, record it so the next session or parallel agent doesn't 
 **Where it goes:**
 - `plan/plan-[name]/handoff.md` — tactical notes for the next session ("tried X, failed because Y")
 - `plan/plan-[name]/log.md` — permanent record of direction changes and dead ends within this plan
-- `.claude/learnings/` — only when the learning is reusable across plans ("this library silently swallows errors")
+- `.scc/learnings/` — only when the learning is reusable across plans ("this library silently swallows errors")
 
 ## Session Start
 
@@ -138,7 +138,7 @@ After each task, briefly assess context usage. Don't start new work if you can't
    - **State**: commit hash, build/test status
    - **Next**: where the next session starts (phase, task)
 2. Commit and push
-3. Update `.claude/status/plan-[name].md` with current phase, task, blocked status, and date
+3. Update `.scc/status/plan-[name].md` with current phase, task, blocked status, and date
 
 The Stop hook enforces handoff writing — it blocks if `handoff.md` appears stale. The PreCompact hook reminds you before auto-compaction. Write the handoff while context is fresh, not at the last moment.
 
@@ -146,7 +146,7 @@ The Stop hook enforces handoff writing — it blocks if `handoff.md` appears sta
 3. **Surprises** in handoff.md: anything learned that the plan didn't anticipate
 4. **What didn't work** in handoff.md: approaches tried and abandoned
 5. **Direction changes** in `log.md`: decisions made that modified the plan
-6. **Learnings** in `.claude/learnings/`: only if something is reusable beyond this plan
+6. **Learnings** in `.scc/learnings/`: only if something is reusable beyond this plan
 
 Write the handoff while your context is still fresh — not at the last moment when context is degraded.
 
@@ -165,5 +165,5 @@ touch plan/plan-[name]/.completed
 Do NOT skip this step. Do NOT stop the session before writing the marker. The `.completed` file is what triggers the archival process — without it, the plan sits in `plan/` forever.
 
 After writing the marker, the Stop hook will detect it and instruct you to launch a two-agent team:
-- **Archivist** (read `hooks/agents/archivist.md`): synthesizes `archive/plan-[name].md`, updates `archive/index.md`, cleans up `plan/plan-[name]/`, updates `.claude/status/`
+- **Archivist** (read `hooks/agents/archivist.md`): synthesizes `archive/plan-[name].md`, updates `archive/index.md`, cleans up `plan/plan-[name]/`, updates `.scc/status/`
 - **Cleanup agent** (read `hooks/agents/cleanup.md`): scans source files from the plan's file manifest for dead code, removes it, commits

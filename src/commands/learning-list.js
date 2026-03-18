@@ -3,7 +3,7 @@ import { join } from 'node:path';
 
 export async function learningListCommand() {
   const cwd = process.cwd();
-  const learningsDir = join(cwd, '.claude/learnings');
+  const learningsDir = join(cwd, '.scc/learnings');
 
   let files;
   try {

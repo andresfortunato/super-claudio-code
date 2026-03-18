@@ -139,7 +139,7 @@ After all teammates finish:
 2. Review for conflicts or contradictions between teammates
 3. For experiments: compare results against the criteria from the orchestration plan
 4. Synthesize into a summary for the user
-5. For plan-based work: update `plan/plan-[name]/handoff.md` and `.claude/status/plan-[name].md`
+5. For plan-based work: update `plan/plan-[name]/handoff.md` and `.scc/status/plan-[name].md`
 
 ## Short vs Long Running Teams
 

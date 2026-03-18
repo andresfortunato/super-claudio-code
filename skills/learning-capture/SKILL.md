@@ -17,8 +17,8 @@ Capture institutional knowledge so future sessions don't repeat mistakes or miss
 1. **Identify what was learned** — ask the user if it's not obvious. One learning per file.
 2. **Pick the type** — gotcha or insight (see formats below).
 3. **Choose a filename** — short, kebab-case, descriptive. Example: `hooks-matcher-null.md`, `langgraph-state-immutable.md`.
-4. **Write the file** to `.claude/learnings/<filename>.md`.
-5. **Append to `.claude/learnings/index.yaml`** — always do both atomically.
+4. **Write the file** to `.scc/learnings/<filename>.md`.
+5. **Append to `.scc/learnings/index.yaml`** — always do both atomically.
 
 ## Learning types
 

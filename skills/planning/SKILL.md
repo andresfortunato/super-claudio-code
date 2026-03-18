@@ -4,9 +4,9 @@ description: Guide for writing implementation plans that give Claude the right l
 ---
 
 ## Project identity
-!`cat .claude/status/project.md 2>/dev/null || echo "⚠ NO PROJECT IDENTITY — you MUST create .claude/status/project.md before proceeding. Ask the user about their project first."`
+!`cat .scc/status/project.md 2>/dev/null || echo "⚠ NO PROJECT IDENTITY — you MUST create .scc/status/project.md before proceeding. Ask the user about their project first."`
 
-**IMPORTANT: If the line above says "NO PROJECT IDENTITY", stop and handle this before doing anything else.** Ask the user: "There's no project identity file yet. Want me to create one? What does this project do and what's the current focus?" Then explore the codebase (package.json/pyproject.toml, README, directory structure) and recent git history (`git log --oneline -20`), and write `.claude/status/project.md` — 3-5 lines max: project name, what it does, current focus, what's next. No stack info (that belongs in CLAUDE.md).
+**IMPORTANT: If the line above says "NO PROJECT IDENTITY", stop and handle this before doing anything else.** Ask the user: "There's no project identity file yet. Want me to create one? What does this project do and what's the current focus?" Then explore the codebase (package.json/pyproject.toml, README, directory structure) and recent git history (`git log --oneline -20`), and write `.scc/status/project.md` — 3-5 lines max: project name, what it does, current focus, what's next. No stack info (that belongs in CLAUDE.md).
 
 # Planning
 
@@ -121,7 +121,7 @@ This isn't a rigid template — scale it to the task. A two-file change doesn't 
 
 Before writing, scaffold the plan directory by running `scc plan init [name]`. This creates:
 - `plan/plan-[name]/` — plan directory with `plan.md`, `handoff.md`, `log.md`, `phases/`, `context/`
-- `.claude/status/plan-[name].md` — status file (shared state read by all skills and the SessionStart hook)
+- `.scc/status/plan-[name].md` — status file (shared state read by all skills and the SessionStart hook)
 
 Then write to:
 

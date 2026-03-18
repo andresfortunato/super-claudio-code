@@ -4,9 +4,9 @@ import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
 
 const DIRECTORIES = [
-  '.claude/status',
-  '.claude/learnings',
-  '.claude/learnings/config',
+  '.scc/status',
+  '.scc/learnings',
+  '.scc/learnings/config',
   'plan',
   'archive',
   'brainstorms',
@@ -15,7 +15,7 @@ const DIRECTORIES = [
 
 const LEARNINGS_CONFIG_TEMPLATE = `# Learning File Template
 
-Use this format when writing learnings to \`.claude/learnings/\`.
+Use this format when writing learnings to \`.scc/learnings/\`.
 Always write both the learning file AND an entry in \`index.yaml\` atomically.
 
 ## File format
@@ -54,7 +54,7 @@ The UserPromptSubmit hook matches prompts against these keywords (minimum 2 word
 
 const CLAUDE_MD_TEMPLATE = `# Project Instructions
 
-@.claude/status/project.md
+@.scc/status/project.md
 `;
 
 const INDEX_YAML_TEMPLATE = `# Learning trigger index — searched by UserPromptSubmit hook
@@ -83,26 +83,26 @@ export async function initCommand() {
   // on first use, with actual project analysis instead of a placeholder template.
 
   // Write index.yaml if it doesn't exist
-  const indexPath = join(cwd, '.claude/learnings/index.yaml');
+  const indexPath = join(cwd, '.scc/learnings/index.yaml');
   if (!(await fileExists(indexPath))) {
     await writeFile(indexPath, INDEX_YAML_TEMPLATE);
-    console.log('  ✓ .claude/learnings/index.yaml (template)');
+    console.log('  ✓ .scc/learnings/index.yaml (template)');
   } else {
-    console.log('  · .claude/learnings/index.yaml (already exists)');
+    console.log('  · .scc/learnings/index.yaml (already exists)');
   }
 
   // Write learnings-config.md if it doesn't exist
-  const configPath = join(cwd, '.claude/learnings/config/learnings-config.md');
+  const configPath = join(cwd, '.scc/learnings/config/learnings-config.md');
   if (!(await fileExists(configPath))) {
     await writeFile(configPath, LEARNINGS_CONFIG_TEMPLATE);
-    console.log('  ✓ .claude/learnings/config/learnings-config.md (template)');
+    console.log('  ✓ .scc/learnings/config/learnings-config.md (template)');
   } else {
-    console.log('  · .claude/learnings/config/learnings-config.md (already exists)');
+    console.log('  · .scc/learnings/config/learnings-config.md (already exists)');
   }
 
   // Ensure CLAUDE.md has the @import for project status
   const claudeMdPath = join(cwd, 'CLAUDE.md');
-  const importLine = '@.claude/status/project.md';
+  const importLine = '@.scc/status/project.md';
   if (!(await fileExists(claudeMdPath))) {
     await writeFile(claudeMdPath, CLAUDE_MD_TEMPLATE);
     console.log('  ✓ CLAUDE.md (created with @import for project status)');
