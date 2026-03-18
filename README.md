@@ -184,7 +184,7 @@ brainstorm  →  plan  →  implement  →  complete  →  archive
 ```
 .claude/
   status/
-    project.md                  — project identity + active plans
+    project.md                  — project identity + current focus (created by planning skill, not scc init)
     plan-<name>.md              — per-plan status (phase, task, blocked)
   learnings/
     index.yaml                  — trigger keyword index

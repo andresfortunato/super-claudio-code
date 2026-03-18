@@ -112,6 +112,32 @@ A well-structured plan covers these elements, adapted to the project's needs:
 
 This isn't a rigid template — scale it to the task. A two-file change doesn't need phases. A complex migration might need per-phase plan files. The structure serves the plan, not the other way around.
 
+## Project Identity
+
+Before planning, check if `.claude/status/project.md` exists and is populated.
+
+**Why project.md matters**: It gives every session — yours and future ones — immediate context about what this project is and where it's headed. Unlike CLAUDE.md (which holds stable instructions and conventions), project.md captures current state: what the project does today, what's being worked on, and what's coming next. It's updated more frequently — whenever the project's direction shifts, a major milestone lands, or priorities change.
+
+**If project.md is missing or empty**, ask the user:
+
+> "There's no project identity file yet. Want me to create one? I'll need to know a few things: what does this project do, who uses it, and what's the current focus or next milestone?"
+
+Then:
+1. Run a codebase exploration (package.json/pyproject.toml, README, directory structure, key entry points) to understand what exists
+2. Check recent git history (`git log --oneline -20`) to understand recent momentum
+3. Ask the user about current priorities and near-term direction — the code shows what IS, the user knows what's NEXT
+4. Write `.claude/status/project.md` — **5-10 lines max**. Example:
+
+```markdown
+# Project: Cumply
+Trade compliance SaaS — HTS/TIGIE classification, ruling search, tariff calculation.
+Stack: FastAPI + Supabase + Next.js. Deployed on Railway.
+Current focus: expert chat feature (LLM-powered classification assistant).
+Next: USMCA origin determination module.
+```
+
+No headers, no sections, no templates. Just dense, useful context. The session-start hook injects this into every session automatically.
+
 ## Plan Setup
 
 Before writing, scaffold the plan directory by running `scc plan init [name]`. This creates:

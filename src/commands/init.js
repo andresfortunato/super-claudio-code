@@ -1,4 +1,4 @@
-import { mkdir, writeFile, access, symlink, readlink, unlink, readdir } from 'node:fs/promises';
+import { mkdir, writeFile, readFile, access, symlink, readlink, unlink, readdir } from 'node:fs/promises';
 import { join, resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
@@ -12,15 +12,6 @@ const DIRECTORIES = [
   'brainstorms',
 ];
 
-const PROJECT_STATUS_TEMPLATE = `# Project Status
-
-## Identity
-Project: [project name]
-Description: [one-line description]
-
-## Active Plans
-[none yet — run \`scc plan init <name>\` to create one]
-`;
 
 const LEARNINGS_CONFIG_TEMPLATE = `# Learning File Template
 
@@ -88,14 +79,8 @@ export async function initCommand() {
     }
   }
 
-  // Write project.md if it doesn't exist
-  const projectPath = join(cwd, '.claude/status/project.md');
-  if (!(await fileExists(projectPath))) {
-    await writeFile(projectPath, PROJECT_STATUS_TEMPLATE);
-    console.log('  ✓ .claude/status/project.md (template)');
-  } else {
-    console.log('  · .claude/status/project.md (already exists)');
-  }
+  // project.md is NOT created here — it's populated by the planning skill
+  // on first use, with actual project analysis instead of a placeholder template.
 
   // Write index.yaml if it doesn't exist
   const indexPath = join(cwd, '.claude/learnings/index.yaml');
@@ -115,13 +100,20 @@ export async function initCommand() {
     console.log('  · .claude/learnings/config/learnings-config.md (already exists)');
   }
 
-  // Write CLAUDE.md with @ import for project status if it doesn't exist
+  // Ensure CLAUDE.md has the @import for project status
   const claudeMdPath = join(cwd, 'CLAUDE.md');
+  const importLine = '@.claude/status/project.md';
   if (!(await fileExists(claudeMdPath))) {
     await writeFile(claudeMdPath, CLAUDE_MD_TEMPLATE);
-    console.log('  ✓ CLAUDE.md (with @import for project status)');
+    console.log('  ✓ CLAUDE.md (created with @import for project status)');
   } else {
-    console.log('  · CLAUDE.md (already exists)');
+    const existing = await readFile(claudeMdPath, 'utf-8');
+    if (!existing.includes(importLine)) {
+      await writeFile(claudeMdPath, existing.trimEnd() + '\n\n' + importLine + '\n');
+      console.log('  ✓ CLAUDE.md (added @import for project status)');
+    } else {
+      console.log('  · CLAUDE.md (already has @import)');
+    }
   }
 
   // Install skills to ~/.claude/skills/ (user-wide, symlinks)
