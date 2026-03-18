@@ -44,6 +44,10 @@ Completed: [date]
 
 5. **Update status**: Delete `.claude/status/plan-[name].md`.
 
+6. **Update CLAUDE.md if architecture changed**: Review the plan's file manifest and key decisions. If the plan created new modules, changed the directory structure, added significant dependencies, or altered the architecture, update the relevant sections in CLAUDE.md (codebase map, architecture notes, conventions). If CLAUDE.md doesn't have these sections yet, add them. Keep updates minimal — only what changed, not a full rewrite.
+
+7. **Update project.md**: If `.claude/status/project.md` exists, update the "Current focus" and "Next" lines to reflect the new state after this plan's completion.
+
 ## Constraints
 
 - Don't modify any source code files — only plan/, archive/, and .claude/status/ files.

@@ -126,17 +126,16 @@ Then:
 1. Run a codebase exploration (package.json/pyproject.toml, README, directory structure, key entry points) to understand what exists
 2. Check recent git history (`git log --oneline -20`) to understand recent momentum
 3. Ask the user about current priorities and near-term direction — the code shows what IS, the user knows what's NEXT
-4. Write `.claude/status/project.md` — **5-10 lines max**. Example:
+4. Write `.claude/status/project.md` — **3-5 lines max**. Only what changes: identity, current focus, what's next. Tech stack, architecture, and conventions belong in CLAUDE.md. Example:
 
 ```markdown
-# Project: Cumply
+# Cumply
 Trade compliance SaaS — HTS/TIGIE classification, ruling search, tariff calculation.
-Stack: FastAPI + Supabase + Next.js. Deployed on Railway.
 Current focus: expert chat feature (LLM-powered classification assistant).
 Next: USMCA origin determination module.
 ```
 
-No headers, no sections, no templates. Just dense, useful context. The session-start hook injects this into every session automatically.
+The session-start hook injects this into every session automatically.
 
 ## Plan Setup
 

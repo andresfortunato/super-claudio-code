@@ -177,7 +177,7 @@ brainstorm  →  plan  →  implement  →  complete  →  archive
 2. **Plan**: Planning skill runs `scc plan init <name>`, then writes plan.md with decisions, constraints, file manifest
 3. **Implement**: Execute phase by phase, verify at each checkpoint, write handoffs between sessions
 4. **Complete**: Mark plan as done
-5. **Archive**: Synthesize archive entry, clean up plan directory
+5. **Archive**: Synthesize archive entry, update CLAUDE.md if architecture changed, update project.md focus, clean up plan directory
 
 ## File Layout
 
