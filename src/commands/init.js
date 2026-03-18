@@ -119,7 +119,7 @@ export async function initCommand() {
   // Install skills to ~/.claude/skills/ (user-wide, symlinks)
   await installSkills();
 
-  console.log('\nDone. Edit .claude/status/project.md to set your project identity.');
+  console.log('\nDone. Start a planning session to create your project identity.');
 }
 
 async function installSkills() {

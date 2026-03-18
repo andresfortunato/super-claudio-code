@@ -5,13 +5,12 @@ export async function statusCommand() {
   const cwd = process.cwd();
   const statusDir = join(cwd, '.claude/status');
 
-  // Read project identity
+  // Read project identity (optional — created by planning skill, not scc init)
   let projectContent;
   try {
     projectContent = await readFile(join(statusDir, 'project.md'), 'utf-8');
   } catch {
-    console.error('No project status found. Run `scc init` first.');
-    process.exit(1);
+    projectContent = null;
   }
 
   // Collect all plan status files
@@ -19,7 +18,7 @@ export async function statusCommand() {
   try {
     files = await readdir(statusDir);
   } catch {
-    console.error('Cannot read .claude/status/. Run `scc init` first.');
+    console.log('No .claude/status/ directory. Run `scc init` first.');
     process.exit(1);
   }
 
@@ -32,8 +31,12 @@ export async function statusCommand() {
   }
 
   // Display
-  console.log(projectContent.trim());
-  console.log('');
+  if (projectContent) {
+    console.log(projectContent.trim());
+    console.log('');
+  } else {
+    console.log('No project identity yet. Start a planning session to create one.\n');
+  }
 
   if (plans.length === 0) {
     console.log('No active plans.');
