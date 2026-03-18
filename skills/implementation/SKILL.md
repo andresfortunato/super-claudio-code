@@ -88,9 +88,7 @@ Execution operates at the **phase level**. A phase groups related tasks that oft
 2. Work through tasks — implement naturally without per-task ceremony
 3. After each task: run verification, mark done with a one-line status note
 4. At natural breakpoints: check escalation triggers and assess context usage
-5. Phase complete: verify all phase-level criteria, write handoff
-
-Commits and status updates are automated — the TaskCompleted hook auto-commits with `Complete: [description]` and updates the status file's timestamp. For PR-quality commit messages, use `/commit` manually. The skill focuses on implementation, verification, and judgment — not mechanics.
+5. Phase complete:  verify all phase-level criteria, commit, push, and write handoff
 
 ### Parallelization
 
@@ -132,7 +130,8 @@ After each task, briefly assess context usage. Don't start new work if you can't
    - **Status**: task table with status notes (what's done, what's next)
    - **State**: commit hash, build/test status
    - **Next**: where the next session starts (phase, task)
-2. Update `.claude/status/plan-[name].md` with current phase, task, blocked status, and date
+2. Commit and push
+3. Update `.claude/status/plan-[name].md` with current phase, task, blocked status, and date
 
 The Stop hook enforces handoff writing — it blocks if `handoff.md` appears stale. The PreCompact hook reminds you before auto-compaction. Write the handoff while context is fresh, not at the last moment.
 
