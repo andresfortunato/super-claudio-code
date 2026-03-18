@@ -11,6 +11,13 @@ Super Claudio Code (SCC) is based on my experience working with Claude Code. I'v
 
 SCC has two layers: a **CLI** for scaffolding and **skills** for orchestration.
 
+## Principles
+
+- We shouldn't assign too much weight to plans, assuming almost automatic execution. Iteration makes planning better. Plans are the map, not the territory. 
+- Many plans tend to micromanage implementation, which is counterproductive because in reality plans change all the time. Micromanaged plans constrain the implementation agent's problem-solving capacity. 
+- Baking code snippets in plans is a waste of tokens. The implementation agent or session will re-read the codebase.
+- We want to minimize the ratio of .md lines to code execution that is required to achieve high quality results
+
 ## Installation
 
 Install the framework globally (once):
@@ -198,13 +205,6 @@ archive/
 brainstorms/
   <topic>.md                    — brainstorming session outputs
 ```
-
-## Some reflections
-
-- We shouldn't assign too much weight to plans, assuming almost automatic execution. Iteration makes planning better. Plans are the map, not the territory. 
-- Many plans tend to micromanage implementation, which is counterproductive because in reality plans change all the time. Micromanaged plans constrain the implementation agent's problem-solving capacity. 
-- Baking code snippets in plans is a waste of tokens. The implementation agent or session will re-read the codebase.
-- We want to minimize the ratio of .md lines to code execution that is required to achieve high quality results
 
 ## Reference Workflows (last update 03/13/2026)
  
