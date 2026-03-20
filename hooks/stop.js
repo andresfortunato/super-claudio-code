@@ -29,12 +29,10 @@ async function main() {
       process.stdout.write(JSON.stringify({
         decision: 'block',
         reason: `Plan "${dir.name}" is marked complete (.completed marker found). ` +
-          'Before stopping, launch two parallel agents:\n' +
-          '1. Archivist agent (read hooks/agents/archivist.md for instructions) — ' +
-          `archives plan "${dir.name}", cleans up plan directory, updates status\n` +
-          '2. Cleanup agent (read hooks/agents/cleanup.md for instructions) — ' +
-          `scans files from plan "${dir.name}" for dead code, removes it, commits\n` +
-          'Launch both as subagents. After they complete, you can stop.'
+          'Before stopping, launch two parallel subagents:\n' +
+          `1. "archivist" subagent — archives plan "${dir.name}", cleans up plan directory, updates status\n` +
+          `2. "cleanup" subagent — scans files from plan "${dir.name}" for dead code, removes it, commits\n` +
+          'Both are defined in ~/.claude/agents/. After they complete, you can stop.'
       }) + '\n');
       process.exit(2);
     }

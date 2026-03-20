@@ -164,6 +164,6 @@ touch plan/plan-[name]/.completed
 
 Do NOT skip this step. Do NOT stop the session before writing the marker. The `.completed` file is what triggers the archival process — without it, the plan sits in `plan/` forever.
 
-After writing the marker, the Stop hook will detect it and instruct you to launch a two-agent team:
-- **Archivist** (read `hooks/agents/archivist.md`): synthesizes `archive/plan-[name].md`, updates `archive/index.md`, cleans up `plan/plan-[name]/`, updates `.scc/status/`
-- **Cleanup agent** (read `hooks/agents/cleanup.md`): scans source files from the plan's file manifest for dead code, removes it, commits
+After writing the marker, the Stop hook will detect it and instruct you to launch two subagents (defined in `~/.claude/agents/`):
+- **archivist**: synthesizes `archive/plan-[name].md`, updates `archive/index.md`, cleans up `plan/plan-[name]/`, updates `.scc/status/`
+- **cleanup**: scans source files from the plan's file manifest for dead code, removes it, commits
