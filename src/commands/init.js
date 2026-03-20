@@ -119,6 +119,9 @@ export async function initCommand() {
   // Install skills to ~/.claude/skills/ (user-wide, symlinks)
   await installSkills();
 
+  // Install agents to ~/.claude/agents/ (user-wide, symlinks)
+  await installAgents();
+
   console.log('\nDone. Start a planning session to create your project identity.');
 }
 
@@ -163,6 +166,53 @@ async function installSkills() {
     console.log(`  ✓ ~/.claude/skills/ (${installed} skills linked)`);
   } else {
     console.log('  · ~/.claude/skills/ (skills already installed)');
+  }
+}
+
+async function installAgents() {
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+  const agentsSource = resolve(__dirname, '../../agents');
+  const agentsDir = join(homedir(), '.claude', 'agents');
+
+  await mkdir(agentsDir, { recursive: true });
+
+  let entries;
+  try {
+    entries = await readdir(agentsSource, { withFileTypes: true });
+  } catch {
+    console.log('  · Agents source not found (skipping)');
+    return;
+  }
+
+  const agentFiles = entries.filter(e => e.isFile() && e.name.endsWith('.md'));
+  let installed = 0;
+
+  for (const file of agentFiles) {
+    const source = join(agentsSource, file.name);
+    const target = join(agentsDir, file.name);
+
+    try {
+      const existing = await readlink(target).catch(() => null);
+      if (existing === source) continue;
+
+      // Remove stale symlink but don't overwrite real files
+      if (existing !== null) {
+        await unlink(target);
+      } else if (await fileExists(target)) {
+        continue; // Real file exists — don't overwrite user's agent
+      }
+
+      await symlink(source, target);
+      installed++;
+    } catch {
+      // Target exists as a real file — don't overwrite
+    }
+  }
+
+  if (installed > 0) {
+    console.log(`  ✓ ~/.claude/agents/ (${installed} agents linked)`);
+  } else {
+    console.log('  · ~/.claude/agents/ (agents already installed)');
   }
 }
 
