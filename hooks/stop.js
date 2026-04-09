@@ -2,12 +2,14 @@
 
 // Stop hook — detects plan completion marker and triggers archival.
 //
-// When a .completed file exists in a plan directory, blocks and instructs
+// When a .completed file exists in a plan directory, blocks once and instructs
 // Claude to launch archivist + cleanup agents before stopping.
+// Creates .archival-triggered sentinel to avoid re-blocking on subsequent turns.
+// Both markers are cleaned up when the archivist deletes the plan directory.
 //
 // Can block: yes (exit code 2 + reason tells Claude to continue).
 
-import { readdir, access } from 'node:fs/promises';
+import { readdir, access, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
 async function main() {
@@ -25,7 +27,10 @@ async function main() {
 
   for (const dir of planDirs) {
     const completedMarker = join(planDir, dir.name, '.completed');
+    const triggeredMarker = join(planDir, dir.name, '.archival-triggered');
+    if (await fileExists(triggeredMarker)) continue; // Already blocked once — don't loop
     if (await fileExists(completedMarker)) {
+      await writeFile(triggeredMarker, new Date().toISOString());
       process.stdout.write(JSON.stringify({
         decision: 'block',
         reason: `Plan "${dir.name}" is marked complete (.completed marker found). ` +
