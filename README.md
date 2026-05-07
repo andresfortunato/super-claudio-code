@@ -20,25 +20,39 @@ SCC has two layers: a **CLI** for scaffolding and **skills** for orchestration.
 
 ## Installation
 
-Install the framework globally (once):
+SCC ships through two channels — **install both** for the full experience:
+
+| Channel | Gives you | Required for |
+|---------|-----------|--------------|
+| Plugin marketplace | Auto-wired hooks, skills, and agents that fire across every Claude Code session | Hook automation (learning injection, plan completion detection, pre-compact reminders) |
+| npm | The `scc` CLI on `$PATH` | The planning skill's `scc plan init` and `scc init`/`scc status`/`scc learning list` commands |
+
+You can use either path alone — but with only one, you're missing half the framework. Hooks won't fire if you skip the plugin; the planning skill can't scaffold plan directories if you skip npm.
+
+### 1. Plugin marketplace (hooks + skills + agents)
+
+From inside a Claude Code session:
+
+```
+/plugin marketplace add github:andresfortunato/super-claudio-code
+/plugin install super-claudio-code@super-claudio-code
+```
+
+Path-resolved at runtime via `${CLAUDE_PLUGIN_ROOT}`. Update with `/plugin marketplace update` or change versions via `/plugin update`.
+
+### 2. npm (CLI)
 
 ```bash
 npm install -g github:andresfortunato/super-claudio-code
 ```
 
-This gives you the `scc` CLI globally. Then, in each project:
+Then in each project:
 
 ```bash
 scc init
 ```
 
-This scaffolds project directories (`.scc/status/`, `.scc/learnings/`, `plan/`, `archive/`, `brainstorms/`) and installs skills to `~/.claude/skills/`. Idempotent — safe to run again.
-
-Verify:
-
-```bash
-scc status
-```
+This scaffolds `.scc/status/`, `.scc/learnings/`, `plan/`, `archive/`, `brainstorms/`. Idempotent. Verify with `scc status`.
 
 > **Note:** Once published to npm, install simplifies to `npm install -g super-claudio-code`.
 
@@ -125,7 +139,7 @@ Captures institutional knowledge as individual files in `.scc/learnings/`. Suppo
 
 ## Hooks
 
-Three hooks are enabled in user-level settings (`~/.claude/settings.json`) and fire across all projects:
+Three hooks fire across all projects once the plugin is installed (no settings.json edits required):
 
 | Hook | Event | What it does |
 |------|-------|-------------|
@@ -135,11 +149,37 @@ Three hooks are enabled in user-level settings (`~/.claude/settings.json`) and f
 
 Project context is loaded via `@` import in CLAUDE.md (see [Claude Code memory docs](https://code.claude.com/docs/en/memory#import-additional-files)). Plan status is read on demand by the implementation skill, not auto-injected — this keeps multi-plan sessions from drowning in noise.
 
-To enable hooks, add them to `~/.claude/settings.json` (user-level, all projects) or a project's `.claude/settings.json`:
+### Disabling hooks
+
+Set `SCC_DISABLED_HOOKS` to a comma-separated list of hook names to disable individual hooks without touching settings.json. The hook script exits 0 immediately when its name appears in the list:
+
+```bash
+# Disable just the stop hook for one session
+SCC_DISABLED_HOOKS=stop claude
+
+# Disable two
+export SCC_DISABLED_HOOKS=stop,pre-compact
+```
+
+Valid names: `user-prompt-submit`, `stop`, `pre-compact` (basename of each hook script, no `.js`). Restart the session to pick up changes.
+
+### Manual install (no plugin)
+
+If you can't or don't want to use the plugin marketplace, you can wire the hooks yourself. Add the entries to `~/.claude/settings.json` (user-level, all projects) or a project's `.claude/settings.json` — replace `/path/to/super-claudio-code` with the absolute path of your `npm install -g` checkout:
 
 ```json
 {
   "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [{
+          "type": "command",
+          "command": "node /path/to/super-claudio-code/hooks/user-prompt-submit.js",
+          "timeout": 10
+        }]
+      }
+    ],
     "Stop": [
       {
         "matcher": "",
@@ -149,10 +189,22 @@ To enable hooks, add them to `~/.claude/settings.json` (user-level, all projects
           "timeout": 10
         }]
       }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [{
+          "type": "command",
+          "command": "node /path/to/super-claudio-code/hooks/pre-compact.js",
+          "timeout": 10
+        }]
+      }
     ]
   }
 }
 ```
+
+The plugin path avoids these absolute paths by resolving `${CLAUDE_PLUGIN_ROOT}` at runtime — recommended unless you have a specific reason not to use it.
 
 ## Learning System
 

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "super-claudio-code",
+  "description": "Self-marketplace for the Super Claudio Code framework — structured planning, context management, session orchestration, and automated learning",
+  "owner": {
+    "name": "Andres Fortunato"
+  },
+  "plugins": [
+    {
+      "name": "super-claudio-code",
+      "source": "./",
+      "description": "Claude Code efficiency framework — structured planning, context management, session orchestration, and automated learning",
+      "category": "productivity",
+      "homepage": "https://github.com/andresfortunato/super-claudio-code"
+    }
+  ]
+}
