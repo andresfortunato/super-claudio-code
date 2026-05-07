@@ -34,9 +34,11 @@ You can use either path alone — but with only one, you're missing half the fra
 From inside a Claude Code session:
 
 ```
-/plugin marketplace add github:andresfortunato/super-claudio-code
+/plugin marketplace add andresfortunato/super-claudio-code
 /plugin install super-claudio-code@super-claudio-code
 ```
+
+Or from a terminal: `claude plugin marketplace add andresfortunato/super-claudio-code` followed by `claude plugin install super-claudio-code@super-claudio-code`.
 
 Path-resolved at runtime via `${CLAUDE_PLUGIN_ROOT}`. Update with `/plugin marketplace update` or change versions via `/plugin update`.
 
