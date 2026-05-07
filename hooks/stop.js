@@ -61,4 +61,8 @@ function readStdin() {
   });
 }
 
+if ((process.env.SCC_DISABLED_HOOKS || '').split(',').map(s => s.trim()).includes('stop')) {
+  process.exit(0);
+}
+
 main().catch(() => process.exit(0));
