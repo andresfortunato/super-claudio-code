@@ -14,8 +14,7 @@
     "hooks/",
     "skills/",
     ".claude-plugin/",
-    ".scc/learnings/config/",
-    "install.js"
+    ".scc/learnings/config/"
   ],
   "keywords": [
     "claude-code",
