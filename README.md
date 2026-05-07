@@ -125,16 +125,15 @@ Captures institutional knowledge as individual files in `.scc/learnings/`. Suppo
 
 ## Hooks
 
-Four hooks are enabled in user-level settings (`~/.claude/settings.json`) and fire across all projects:
+Three hooks are enabled in user-level settings (`~/.claude/settings.json`) and fire across all projects:
 
 | Hook | Event | What it does |
 |------|-------|-------------|
-| `session-start.js` | SessionStart | Injects active plan statuses into session context (dynamic — discovers plans automatically) |
 | `user-prompt-submit.js` | UserPromptSubmit | Matches prompt against learning triggers, injects relevant learnings |
 | `stop.js` | Stop | Detects plan completion (.completed marker), triggers archival agents |
 | `pre-compact.js` | PreCompact | Reminds to write handoff and capture learnings before compaction |
 
-Static project context is loaded via `@` import in CLAUDE.md (see [Claude Code memory docs](https://code.claude.com/docs/en/memory#import-additional-files)). Dynamic plan discovery is handled by the session-start hook.
+Project context is loaded via `@` import in CLAUDE.md (see [Claude Code memory docs](https://code.claude.com/docs/en/memory#import-additional-files)). Plan status is read on demand by the implementation skill, not auto-injected — this keeps multi-plan sessions from drowning in noise.
 
 To enable hooks, add them to `~/.claude/settings.json` (user-level, all projects) or a project's `.claude/settings.json`:
 

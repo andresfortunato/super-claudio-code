@@ -78,7 +78,6 @@ function parseStatusFields(content) {
  */
 function formatStatus(plans) {
   // YOUR IMPLEMENTATION HERE
-  // Consider: this output gets injected by the SessionStart hook into every session.
   // It should be scannable, low-token, and immediately tell you what's active and what's blocked.
   return plans.map(p => p.content.trim()).join('\n\n');
 }
